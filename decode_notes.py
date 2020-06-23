@@ -1,6 +1,8 @@
 import librosa
 import numpy as np
 import random
+from tkinter import filedialog
+from tkinter import *
 
 def detect_pitch(magnitudes, pitches, t):
   index = magnitudes[:, t].argmax()
@@ -137,5 +139,10 @@ def decode(input_wav_file):
     return keyout
 
 if __name__ == '__main__':
-    keys = decode('BaseAfterBase.wav')
+    root = Tk()
+    root.withdraw()
+    root.update()
+    filename = filedialog.askopenfilename(filetypes = (("wav files","*.wav"),("all files","*.*")))
+    root.destroy()
+    keys = decode(filename)
     print(keys)
