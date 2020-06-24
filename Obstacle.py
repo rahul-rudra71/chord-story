@@ -2,10 +2,13 @@ import random, pygame
 
 
 class Obstacle:
-    def __init__(self):
+    def __init__(self, stringNo):
 
         # generate a random number 0-5 to pick a string for the obstacle to spawn
-        num = random.randint(0, 5)
+        # num = random.randint(0, 5)
+        #
+
+        num = int(stringNo)
 
         if num == 0:
             self._rect = pygame.Rect((300, 15, 15, 15))

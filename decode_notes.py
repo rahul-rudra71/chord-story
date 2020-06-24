@@ -2,11 +2,13 @@ import librosa
 import numpy as np
 import random
 
-def detect_pitch(magnitudes, pitches, t):
-  index = magnitudes[:, t].argmax()
-  pitch = pitches[index, t]
 
-  return pitch
+def detect_pitch(magnitudes, pitches, t):
+    index = magnitudes[:, t].argmax()
+    pitch = pitches[index, t]
+
+    return pitch
+
 
 def trim_onsets(onsets, times):
     # Enforce space between onsets used for obstacle generation so player
@@ -15,7 +17,7 @@ def trim_onsets(onsets, times):
     del_array = []
     # Remove onsets from array to generate obstacles that are too close together to be avoided (~<0.5 s)
     for index, current in enumerate(times):
-        if current - last < 0.5:
+        if current - last < .5:
             del_array.append(index)
         else:
             last = current
@@ -24,12 +26,14 @@ def trim_onsets(onsets, times):
 
     return onsets, times
 
+
 def trim_times(times):
     # Trim onset times to 2 decimal places
     for index, time in enumerate(times):
         times[index] = round(time, 2)
 
     return times
+
 
 def assign_string(nt, prev):
     # string 0 = E4 - B5
@@ -88,6 +92,7 @@ def assign_string(nt, prev):
 
     return out
 
+
 def decode(input_wav_file):
     filename = input_wav_file
 
@@ -136,6 +141,7 @@ def decode(input_wav_file):
     # Output dictionary of times and string assignments
     return keyout
 
+
 if __name__ == '__main__':
-    keys = decode('BaseAfterBase.wav')
+    keys = decode('background.wav')
     print(keys)

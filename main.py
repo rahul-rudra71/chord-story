@@ -1,12 +1,15 @@
-import pygame, os, sys
+import pygame, os, sys, random
+import decode_notes as dn
 from pygame.locals import *
+from pygame import mixer
 from Obstacle import Obstacle
 
-os.environ['SDL_AUDIODRIVER'] = 'dsp'
+#os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 clock = pygame.time.Clock()
 
 pygame.init()
+mixer.init()
 
 pygame.display.set_caption('Chord Story')
 
@@ -22,9 +25,6 @@ vertical_momentum = 0
 air_timer = 0
 
 true_scroll = [0, 0]
-
-grass_img = pygame.image.load('grass.png')
-dirt_img = pygame.image.load('dirt.png')
 
 player_img = pygame.image.load('player.png').convert()
 player_img.set_colorkey((255, 255, 255))
@@ -92,8 +92,19 @@ def game_over():
     screen.blit(text, text_rect)
 
 
+notes = dn.decode('PinkPanther30.wav')
+mixer.music.load('PinkPanther30.wav')
+noteKeys = list(notes.keys())
+
+noteTime = noteKeys[0]
+stringNo = notes[noteTime]
+
 NEWOBSTACLE = USEREVENT + 1
-pygame.time.set_timer(NEWOBSTACLE, 500)
+pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
+
+keyIndex = 0
+
+mixer.music.play()
 
 while True:  # game loop
     display.fill((255, 255, 255))  # clear screen by filling it with blue
@@ -168,8 +179,15 @@ while True:  # game loop
             if event.key == K_LEFT:
                 moving_left = False
         if event.type == NEWOBSTACLE:
-            obstacle = Obstacle()
+            obstacle = Obstacle(stringNo)
             obstacles.append(obstacle)
+
+            keyIndex = keyIndex + 1
+            noteTime = noteKeys[keyIndex]
+            noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
+            stringNo = notes[noteTime]
+
+            pygame.time.set_timer(NEWOBSTACLE, int(noteDiffTime * 1000))
 
     if running:
         player_rect.x -= scroll
