@@ -1,12 +1,14 @@
-import pygame, os, sys
+import pygame, os, sys, random
+# import decode_notes as dn
 from pygame.locals import *
+from pygame import mixer
 from Obstacle import Obstacle
-
 os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 clock = pygame.time.Clock()
 
 pygame.init()
+# mixer.init()
 
 pygame.display.set_caption('Chord Story')
 
@@ -15,13 +17,6 @@ WINDOW_SIZE = (600, 400)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
 
 display = pygame.Surface((300, 200))  # used as the surface for rendering, which is scaled
-
-
-
-
-#grass_img = pygame.image.load('grass.png')
-#dirt_img = pygame.image.load('dirt.png')
-
 
 chord = pygame.image.load('mainmenu.png')
 #menu_size = menu.get_size()
@@ -134,8 +129,19 @@ def game_over():
     screen.blit(text, text_rect)
 
 
+#notes = dn.decode('PinkPanther30.wav')
+#mixer.music.load('PinkPanther30.wav')
+#noteKeys = list(notes.keys())
+
+#noteTime = noteKeys[0]
+#stringNo = notes[noteTime]
+
 NEWOBSTACLE = USEREVENT + 1
-pygame.time.set_timer(NEWOBSTACLE, 500)
+# pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
+
+keyIndex = 0
+
+#mixer.music.play()
 
 def run_game():
     play_game = True
