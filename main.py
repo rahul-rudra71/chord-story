@@ -4,7 +4,7 @@ from pygame.locals import *
 from pygame import mixer
 from Obstacle import Obstacle
 
-#os.environ['SDL_AUDIODRIVER'] = 'dsp'
+# os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 clock = pygame.time.Clock()
 
@@ -19,17 +19,7 @@ screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
 
 display = pygame.Surface((300, 200))  # used as the surface for rendering, which is scaled
 
-moving_right = False
-moving_left = False
-vertical_momentum = 0
-air_timer = 0
-
-true_scroll = [0, 0]
-
-player_img = pygame.image.load('player.png').convert()
-player_img.set_colorkey((255, 255, 255))
-
-player_rect = pygame.Rect(100, 100, 5, 13)
+chord = pygame.image.load('mainmenu.png')
 
 background = pygame.image.load('background.png')
 background_size = background.get_size()
@@ -45,6 +35,48 @@ scroll = 1
 obstacles = []
 
 running = True
+
+click = False
+
+
+def main_menu():
+    menu_open = True
+    while menu_open:
+
+        display.fill((255, 255, 255))  # clear screen by filling it with white
+
+        screen.blit(chord, (0, 0))
+
+        mousex, mousey = pygame.mouse.get_pos()
+
+        # create the classic mode button
+        classic_button = pygame.Rect(50, 50, 150, 60)
+
+        if classic_button.collidepoint((mousex, mousey)):
+            if (click):
+                # play the game if the button is pressed
+                run_game()
+
+        # render button
+        pygame.draw.rect(screen, (156, 17, 21), classic_button)
+
+        classic_font = pygame.font.Font('freesansbold.ttf', 17)
+        classic_text = classic_font.render("CLASSIC MODE", True, (255, 255, 255))
+        screen.blit(classic_text, (59, 72))
+
+        click = False
+
+        for event in pygame.event.get():  # event loop
+            if event.type == QUIT:
+                menu_open = False
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        pygame.display.update()
+        clock.tick(60)
 
 
 def collision_test(rect, tiles):
@@ -90,114 +122,132 @@ def game_over():
     text = font.render("GAME OVER", True, (255, 0, 0))
     text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
+    mixer.music.stop()
 
 
-notes = dn.decode('PinkPanther30.wav')
-mixer.music.load('PinkPanther30.wav')
-noteKeys = list(notes.keys())
+def run_game():
+    play_game = True
+    running = True
 
-noteTime = noteKeys[0]
-stringNo = notes[noteTime]
+    moving_right = False
+    moving_left = False
+    vertical_momentum = 0
+    air_timer = 0
 
-NEWOBSTACLE = USEREVENT + 1
-pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
+    true_scroll = [0, 0]
 
-keyIndex = 0
+    player_img = pygame.image.load('player.png').convert()
+    player_img.set_colorkey((255, 255, 255))
 
-mixer.music.play()
+    player_rect = pygame.Rect(100, 100, 5, 13)
 
-while True:  # game loop
-    display.fill((255, 255, 255))  # clear screen by filling it with blue
+    notes = dn.decode('PinkPanther30.wav')
+    mixer.music.load('PinkPanther30.wav')
+    noteKeys = list(notes.keys())
 
-    # scrolling background
-    display.blit(background, background_rect)  # left image
-    display.blit(background, background_rect.move(background_rect.width, 0))  # right image
-    if running:
-        background_rect.move_ip(-1, 0)
-    if background_rect.right == 0:
-        background_rect.x = 0
+    noteTime = noteKeys[0]
+    stringNo = notes[noteTime]
 
-    tile_rects = []
+    NEWOBSTACLE = USEREVENT + 1
+    pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
 
-    # draw strings
-    pygame.draw.line(display, (255, 255, 255), (0, 29), (400, 29), 2)  # line 0
-    tile_rects.append(pygame.Rect(0, 29, 400, 2))
-    pygame.draw.line(display, (255, 255, 255), (0, 59), (400, 59), 2)  # line 1
-    tile_rects.append(pygame.Rect(0, 59, 400, 2))
-    pygame.draw.line(display, (255, 255, 255), (0, 89), (400, 89), 2)  # line 2
-    tile_rects.append(pygame.Rect(0, 89, 400, 2))
-    pygame.draw.line(display, (255, 255, 255), (0, 119), (400, 119), 2)  # line 3
-    tile_rects.append(pygame.Rect(0, 119, 400, 2))
-    pygame.draw.line(display, (255, 255, 255), (0, 149), (400, 149), 2)  # line 4
-    tile_rects.append(pygame.Rect(0, 149, 400, 2))
-    pygame.draw.line(display, (255, 255, 255), (0, 179), (400, 179), 2)  # line 5
-    tile_rects.append(pygame.Rect(0, 179, 400, 2))
+    keyIndex = 0
+    mixer.music.play()
 
-    for obstacle in obstacles:
+    while play_game:  # game loop
+        display.fill((255, 255, 255))  # clear screen by filling it with white
+
+        # scrolling background
+        display.blit(background, background_rect)  # left image
+        display.blit(background, background_rect.move(background_rect.width, 0))  # right image
         if running:
-            obstacle.rect.x -= 2
-        pygame.draw.rect(display, (255, 255, 255), obstacle.rect)
+            background_rect.move_ip(-1, 0)
+        if background_rect.right == 0:
+            background_rect.x = 0
 
-    player_movement = [0, 0]
+        tile_rects = []
 
-    if running:
-        if moving_right == True:
-            player_movement[0] += 2
-        if moving_left == True:
-            player_movement[0] -= 2
-        player_movement[1] += vertical_momentum
-        vertical_momentum += 0.2
-        if vertical_momentum > 3:
-            vertical_momentum = 3
+        # draw strings
+        pygame.draw.line(display, (255, 255, 255), (0, 29), (400, 29), 2)  # line 0
+        tile_rects.append(pygame.Rect(0, 29, 400, 2))
+        pygame.draw.line(display, (255, 255, 255), (0, 59), (400, 59), 2)  # line 1
+        tile_rects.append(pygame.Rect(0, 59, 400, 2))
+        pygame.draw.line(display, (255, 255, 255), (0, 89), (400, 89), 2)  # line 2
+        tile_rects.append(pygame.Rect(0, 89, 400, 2))
+        pygame.draw.line(display, (255, 255, 255), (0, 119), (400, 119), 2)  # line 3
+        tile_rects.append(pygame.Rect(0, 119, 400, 2))
+        pygame.draw.line(display, (255, 255, 255), (0, 149), (400, 149), 2)  # line 4
+        tile_rects.append(pygame.Rect(0, 149, 400, 2))
+        pygame.draw.line(display, (255, 255, 255), (0, 179), (400, 179), 2)  # line 5
+        tile_rects.append(pygame.Rect(0, 179, 400, 2))
 
-    player_rect, collisions = move(player_rect, player_movement, tile_rects)
+        for obstacle in obstacles:
+            if running:
+                obstacle.rect.x -= 2
+            pygame.draw.rect(display, (255, 255, 255), obstacle.rect)
 
-    running = obstacle_collision(player_rect, obstacles)
+        player_movement = [0, 0]
 
-    for event in pygame.event.get():  # event loop
-        if event.type == QUIT:
-            running = False
-            pygame.quit()
-            sys.exit()
-        if event.type == KEYDOWN and running:
-            if event.key == K_RIGHT:
-                moving_right = True
-            if event.key == K_LEFT:
-                moving_left = True
-            if event.key == K_UP:
-                if air_timer < 6:
-                    vertical_momentum = -3
-            if event.key == K_DOWN:
-                if air_timer < 6:
-                    vertical_momentum = 3
-                player_rect.y += 12
-                if player_rect.y > 166:
-                    player_rect.y = 166
-        if event.type == KEYUP and running:
-            if event.key == K_RIGHT:
-                moving_right = False
-            if event.key == K_LEFT:
-                moving_left = False
-        if event.type == NEWOBSTACLE:
-            obstacle = Obstacle(stringNo)
-            obstacles.append(obstacle)
+        if running:
+            if moving_right == True:
+                player_movement[0] += 2
+            if moving_left == True:
+                player_movement[0] -= 2
+            player_movement[1] += vertical_momentum
+            vertical_momentum += 0.2
+            if vertical_momentum > 3:
+                vertical_momentum = 3
 
-            keyIndex = keyIndex + 1
-            noteTime = noteKeys[keyIndex]
-            noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
-            stringNo = notes[noteTime]
+        player_rect, collisions = move(player_rect, player_movement, tile_rects)
 
-            pygame.time.set_timer(NEWOBSTACLE, int(noteDiffTime * 1000))
+        running = obstacle_collision(player_rect, obstacles)
 
-    if running:
-        player_rect.x -= scroll
+        for event in pygame.event.get():  # event loop
+            if event.type == QUIT:
+                running = False
+                play_game = False
+                pygame.quit()
+                sys.exit()
+            if event.type == KEYDOWN and running:
+                if event.key == K_RIGHT:
+                    moving_right = True
+                if event.key == K_LEFT:
+                    moving_left = True
+                if event.key == K_UP:
+                    if air_timer < 6:
+                        vertical_momentum = -3
+                if event.key == K_DOWN:
+                    if air_timer < 6:
+                        vertical_momentum = 3
+                    player_rect.y += 12
+                    if player_rect.y > 166:
+                        player_rect.y = 166
+            if event.type == KEYUP and running:
+                if event.key == K_RIGHT:
+                    moving_right = False
+                if event.key == K_LEFT:
+                    moving_left = False
+            if event.type == NEWOBSTACLE:
+                obstacle = Obstacle(stringNo)
+                obstacles.append(obstacle)
 
-    display.blit(player_img, (player_rect.x, player_rect.y))
+                keyIndex = keyIndex + 1
+                noteTime = noteKeys[keyIndex]
+                noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
+                stringNo = notes[noteTime]
 
-    screen.blit(pygame.transform.scale(display, WINDOW_SIZE), (0, 0))
+                pygame.time.set_timer(NEWOBSTACLE, int(noteDiffTime * 1000))
 
-    if not running:
-        game_over()
+        display.blit(player_img, (player_rect.x, player_rect.y))
 
-    pygame.display.update()
-    clock.tick(60)
+        screen.blit(pygame.transform.scale(display, WINDOW_SIZE), (0, 0))
+
+        if not running:
+            game_over()
+
+        pygame.display.update()
+        clock.tick(60)
+
+
+if __name__ == "__main__":
+    main_menu()
