@@ -3,7 +3,7 @@ import pygame, os, sys, random
 from pygame.locals import *
 from pygame import mixer
 from Obstacle import Obstacle
-os.environ['SDL_AUDIODRIVER'] = 'dsp'
+# os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
 clock = pygame.time.Clock()
 
@@ -136,14 +136,17 @@ def game_over():
 #noteTime = noteKeys[0]
 #stringNo = notes[noteTime]
 
-NEWOBSTACLE = USEREVENT + 1
-# pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
+
 
 keyIndex = 0
 
 #mixer.music.play()
 
 def run_game():
+    
+    
+    NEWOBSTACLE = USEREVENT + 1
+    pygame.time.set_timer(NEWOBSTACLE, 500)
     play_game = True
     running = True
     
@@ -235,7 +238,7 @@ def run_game():
                 if event.key == K_LEFT:
                     moving_left = False
             if event.type == NEWOBSTACLE:
-                obstacle = Obstacle()
+                obstacle = Obstacle(stringNo)
                 obstacles.append(obstacle)
 
         if running:
