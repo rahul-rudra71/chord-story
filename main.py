@@ -77,6 +77,7 @@ def main_menu():
         pygame.display.update()
         clock.tick(60)
 
+
 def paused():
     click = 0
     pause_screen = True
@@ -126,7 +127,6 @@ def paused():
 
         pygame.display.update()
         clock.tick(60)
-
 
 
 def collision_test(rect, tiles):
