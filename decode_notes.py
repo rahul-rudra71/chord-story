@@ -90,8 +90,13 @@ def assign_string(nt, prev):
 
     return out
 
-def decode(input_wav_file):
-    filename = input_wav_file
+def decode():
+    #open gui to enable user to select file
+    root = Tk()
+    root.withdraw()
+    root.update()
+    filename = filedialog.askopenfilename(filetypes = (("wav files","*.wav"),("mp3 files","*.mp3")))
+    root.destroy()
 
     clip, sample = librosa.load(filename)
 
@@ -137,12 +142,3 @@ def decode(input_wav_file):
         x = x + 1
     # Output dictionary of times and string assignments
     return keyout
-
-if __name__ == '__main__':
-    root = Tk()
-    root.withdraw()
-    root.update()
-    filename = filedialog.askopenfilename(filetypes = (("wav files","*.wav"),("all files","*.*")))
-    root.destroy()
-    keys = decode(filename)
-    print(keys)

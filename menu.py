@@ -5,7 +5,7 @@ from pygame.rect import Rect
 from enum import Enum
 from pygame.sprite import RenderUpdates
 
-from subprocess import call
+import decode_notes
 
 BLUE = (106, 159, 181)
 WHITE = (255, 255, 255)
@@ -97,7 +97,8 @@ def main():
             game_state = create_level(screen, player)
 
         if game_state == GameState.CREATE_LEVEL:
-            call(["python3", "decode_notes.py"])
+            keys = decode_notes.decode()
+            print(keys)
             game_state = create_level(screen, player)
 
         if game_state == GameState.QUIT:
