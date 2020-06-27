@@ -38,7 +38,6 @@ running = True
 
 click = False
 
-
 def main_menu():
     menu_open = True
     while menu_open:
@@ -77,6 +76,57 @@ def main_menu():
 
         pygame.display.update()
         clock.tick(60)
+
+def paused():
+    click = 0
+    pause_screen = True
+    while pause_screen:
+
+        mousex, mousey = pygame.mouse.get_pos()
+
+        # create the buttons used to get back into the game or quit
+        continue_button = pygame.Rect(470, 340, 95, 50)
+        quit_button = pygame.Rect(40, 340, 95, 50)
+
+        # pause message on the screen
+        pause_font = pygame.font.Font('freesansbold.ttf', 80)
+        pause_text = pause_font.render("PAUSE", True, (255, 0, 0))
+        text_rect = pause_text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+        screen.blit(pause_text, text_rect)
+
+        if continue_button.collidepoint((mousex, mousey)):
+            if (click):
+                return 
+        if quit_button.collidepoint((mousex, mousey)):
+            if (click):
+                pause_screen = False
+                pygame.quit()
+                sys.exit()
+
+        # render buttons
+        pygame.draw.rect(screen, (156, 17, 21), continue_button)
+        pygame.draw.rect(screen, (156, 17, 21), quit_button)
+
+        button_font = pygame.font.Font('freesansbold.ttf', 17)
+        continue_text = button_font.render("CONTINUE", True, (255, 255, 255))
+        quit_text = button_font.render("QUIT", True, (255, 255, 255))
+        screen.blit(continue_text, (472, 355))
+        screen.blit(quit_text, (65, 355))
+
+        click = False
+
+        for event in pygame.event.get():  # event loop
+            if event.type == QUIT:
+                pause_screen = False
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        pygame.display.update()
+        clock.tick(60)
+
 
 
 def collision_test(rect, tiles):
@@ -209,6 +259,8 @@ def run_game():
                 pygame.quit()
                 sys.exit()
             if event.type == KEYDOWN and running:
+                if event.key == pygame.K_p:
+                    paused()
                 if event.key == K_RIGHT:
                     moving_right = True
                 if event.key == K_LEFT:
