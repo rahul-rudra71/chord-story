@@ -77,6 +77,11 @@ def main_menu():
         pygame.display.update()
         clock.tick(60)
 
+def unpause():
+    global pause
+    pygame.mixer.music.unpause()
+    pause = False
+
 
 def paused():
     click = 0
@@ -84,6 +89,8 @@ def paused():
     while pause_screen:
 
         mousex, mousey = pygame.mouse.get_pos()
+
+        pygame.mixer.music.pause()
 
         # create the buttons used to get back into the game or quit
         continue_button = pygame.Rect(470, 340, 95, 50)
@@ -97,6 +104,7 @@ def paused():
 
         if continue_button.collidepoint((mousex, mousey)):
             if (click):
+                unpause()
                 return 
         if quit_button.collidepoint((mousex, mousey)):
             if (click):
@@ -176,6 +184,7 @@ def game_over():
 
 
 def run_game():
+    global pause 
     play_game = True
     running = True
 
@@ -260,6 +269,7 @@ def run_game():
                 sys.exit()
             if event.type == KEYDOWN and running:
                 if event.key == pygame.K_p:
+                    pause = True
                     paused()
                 if event.key == K_RIGHT:
                     moving_right = True
