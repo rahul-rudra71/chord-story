@@ -30,6 +30,8 @@ y = 0
 x1 = 0
 y1 = -h
 
+player_lives = 3
+
 scroll = 1
 
 obstacles = []
@@ -182,6 +184,18 @@ def game_over():
     screen.blit(text, text_rect)
     mixer.music.stop()
 
+#def update_lives():
+    #lives_display = pygame.Rect(40, 340, 95, 50)
+
+    #pygame.draw.rect(screen, (255, 255, 255), lives_display)
+
+    #lives_font = pygame.font.Font('freesansbold.ttf', 17)
+    #player_lives_str = str(player_lives)
+    #lives_text = lives_font.render("LIVES: " + player_lives_str, True, (0, 0, 0))
+    #screen.blit(lives_text, (45, 355))
+
+    #pygame.display.update()
+    #clock.tick(60)
 
 def run_game():
     global pause 
@@ -215,6 +229,9 @@ def run_game():
 
     while play_game:  # game loop
         display.fill((255, 255, 255))  # clear screen by filling it with white
+
+        # display the lives
+        # update_lives()
 
         # scrolling background
         display.blit(background, background_rect)  # left image
@@ -306,9 +323,14 @@ def run_game():
 
         if not running:
             game_over()
+            #player_lives = player_lives - 1
+            #if player_lives == 0:
+                #game_over()
+            #else:
+                #update_lives()
 
         pygame.display.update()
-        clock.tick(60)
+        clock.tick(120)
 
 
 if __name__ == "__main__":
