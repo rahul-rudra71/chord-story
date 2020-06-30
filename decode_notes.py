@@ -10,14 +10,14 @@ def detect_pitch(magnitudes, pitches, t):
 
   return pitch
 
-def trim_onsets(onsets, times):
+def trim_onsets(onsets, times, offset):
     # Enforce space between onsets used for obstacle generation so player
     # has an appropriate amount of time for movement
     last = 0
     del_array = []
     # Remove onsets from array to generate obstacles that are too close together to be avoided (~<0.5 s)
     for index, current in enumerate(times):
-        if current - last < 0.5:
+        if current - last < offset:
             del_array.append(index)
         else:
             last = current
@@ -90,7 +90,7 @@ def assign_string(nt, prev):
 
     return out
 
-def decode():
+def decode(note_offset):
     #open gui to enable user to select file
     root = Tk()
     root.withdraw()
@@ -109,7 +109,7 @@ def decode():
     timestamps = librosa.frames_to_time(onset_frames, sr=sample)
 
     # Trim onset array
-    trimmed_onset, new_times = trim_onsets(onset_frames, timestamps)
+    trimmed_onset, new_times = trim_onsets(onset_frames, timestamps, note_offset)
     trimmed_times = trim_times(new_times)
 
     x = 0
