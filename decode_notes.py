@@ -1,14 +1,14 @@
 import librosa
 import numpy as np
 import random
-
+from tkinter import filedialog
+from tkinter import *
 
 def detect_pitch(magnitudes, pitches, t):
-    index = magnitudes[:, t].argmax()
-    pitch = pitches[index, t]
+  index = magnitudes[:, t].argmax()
+  pitch = pitches[index, t]
 
-    return pitch
-
+  return pitch
 
 def trim_onsets(onsets, times):
     # Enforce space between onsets used for obstacle generation so player
@@ -17,7 +17,7 @@ def trim_onsets(onsets, times):
     del_array = []
     # Remove onsets from array to generate obstacles that are too close together to be avoided (~<0.5 s)
     for index, current in enumerate(times):
-        if current - last < .5:
+        if current - last < 0.5:
             del_array.append(index)
         else:
             last = current
@@ -26,14 +26,12 @@ def trim_onsets(onsets, times):
 
     return onsets, times
 
-
 def trim_times(times):
     # Trim onset times to 2 decimal places
     for index, time in enumerate(times):
         times[index] = round(time, 2)
 
     return times
-
 
 def assign_string(nt, prev):
     # string 0 = E4 - B5
@@ -92,9 +90,13 @@ def assign_string(nt, prev):
 
     return out
 
-
-def decode(input_wav_file):
-    filename = input_wav_file
+def decode():
+    #open gui to enable user to select file
+    root = Tk()
+    root.withdraw()
+    root.update()
+    filename = filedialog.askopenfilename(filetypes = (("wav files","*.wav"),("mp3 files","*.mp3")))
+    root.destroy()
 
     clip, sample = librosa.load(filename)
 
@@ -140,8 +142,3 @@ def decode(input_wav_file):
         x = x + 1
     # Output dictionary of times and string assignments
     return keyout
-
-
-if __name__ == '__main__':
-    keys = decode('background.wav')
-    print(keys)

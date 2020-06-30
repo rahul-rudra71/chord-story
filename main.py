@@ -3,6 +3,7 @@ import decode_notes as dn
 from pygame.locals import *
 from pygame import mixer
 from Obstacle import Obstacle
+from menu import *
 
 # os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
@@ -56,6 +57,7 @@ def main_menu():
         if classic_button.collidepoint((mousex, mousey)):
             if (click):
                 # play the game if the button is pressed
+                get_music()
                 run_game()
 
         # render button
@@ -183,6 +185,28 @@ def game_over():
     text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
     mixer.music.stop()
+
+def get_music():
+    pygame.init()
+
+    screen = pygame.display.set_mode((800, 600))
+    game_state = GameState.TITLE
+    player = Player()
+    while True:
+        if game_state == GameState.TITLE:
+            game_state = title_screen(screen)
+
+        if game_state == GameState.CREATEGAME:
+            game_state = create_level(screen, player)
+
+        if game_state == GameState.CREATE_LEVEL:
+            keys = decode_notes.decode()
+            print(keys)
+            game_state = create_level(screen, player)
+
+        if game_state == GameState.QUIT:
+            pygame.quit()
+            return
 
 #def update_lives():
     #lives_display = pygame.Rect(40, 340, 95, 50)
