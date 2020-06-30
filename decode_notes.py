@@ -117,7 +117,9 @@ def decode():
     keyout = {}
     while x < len(trimmed_onset):
         pitch_start = detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[x])
-        note = librosa.core.hz_to_note(pitch_start)
+
+        if pitch_start != 0.0:
+            note = librosa.core.hz_to_note(pitch_start)
         # The string numbers correspond to the strings in
         # Obstacle.py.  Iterate through the output dictionary
         # to obtain obstacle string placements and times

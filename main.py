@@ -40,6 +40,7 @@ running = True
 
 click = False
 
+
 def main_menu():
     menu_open = True
     while menu_open:
@@ -78,6 +79,7 @@ def main_menu():
 
         pygame.display.update()
         clock.tick(60)
+
 
 def unpause():
     global pause
@@ -169,11 +171,15 @@ def move(rect, movement, tiles):
 
 
 def obstacle_collision(player, obstacles):
+    global player_lives
     for obstacle in obstacles:
         if player.colliderect(obstacle):
-            return False
+            player_lives = player_lives - 1
+            obstacles.remove(obstacle)
         if obstacle.rect.left < -15:
             obstacles.remove(obstacle)
+        if player_lives == 0:
+            return False
     return True
 
 
@@ -184,23 +190,31 @@ def game_over():
     screen.blit(text, text_rect)
     mixer.music.stop()
 
-#def update_lives():
-    #lives_display = pygame.Rect(40, 340, 95, 50)
 
-    #pygame.draw.rect(screen, (255, 255, 255), lives_display)
+def game_won():
+    font = pygame.font.Font('freesansbold.ttf', 80)
+    text = font.render("YOU WIN", True, (0, 255, 0))
+    text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+    screen.blit(text, text_rect)
+    mixer.music.stop()
 
-    #lives_font = pygame.font.Font('freesansbold.ttf', 17)
-    #player_lives_str = str(player_lives)
-    #lives_text = lives_font.render("LIVES: " + player_lives_str, True, (0, 0, 0))
-    #screen.blit(lives_text, (45, 355))
 
-    #pygame.display.update()
-    #clock.tick(60)
+def update_lives():
+    lives_display = pygame.Rect(20, 370, 55, 25)
+
+    pygame.draw.rect(screen, (255, 255, 255), lives_display)
+
+    lives_font = pygame.font.Font('freesansbold.ttf', 12)
+    player_lives_str = str(player_lives)
+    lives_text = lives_font.render("LIVES: " + player_lives_str, True, (0, 0, 0))
+    screen.blit(lives_text, (22, 375))
+
 
 def run_game():
     global pause
     play_game = True
     running = True
+    won = False
 
     moving_right = False
     moving_left = False
@@ -231,9 +245,6 @@ def run_game():
 
     while play_game:  # game loop
         display.fill((255, 255, 255))  # clear screen by filling it with white
-
-        # display the lives
-        # update_lives()
 
         # scrolling background
         display.blit(background, background_rect)  # left image
@@ -308,12 +319,19 @@ def run_game():
                     moving_right = False
                 if event.key == K_LEFT:
                     moving_left = False
-            if event.type == NEWOBSTACLE:
+            if event.type == NEWOBSTACLE and not won:
                 obstacle = Obstacle(stringNo)
                 obstacles.append(obstacle)
 
                 keyIndex = keyIndex + 1
+
+                if keyIndex > len(noteKeys) - 1:
+                    won = True
+                    # running = False
+                    break
+
                 noteTime = noteKeys[keyIndex]
+
                 noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
                 stringNo = notes[noteTime]
 
@@ -323,13 +341,14 @@ def run_game():
 
         screen.blit(pygame.transform.scale(display, WINDOW_SIZE), (0, 0))
 
+        # display the lives
+        update_lives()
+
         if not running:
             game_over()
-            #player_lives = player_lives - 1
-            #if player_lives == 0:
-                #game_over()
-            #else:
-                #update_lives()
+
+        if won:
+            game_won()
 
         pygame.display.update()
         clock.tick(120)
