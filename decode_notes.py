@@ -141,4 +141,4 @@ def decode():
 
         x = x + 1
     # Output dictionary of times and string assignments
-    return keyout
+    return [keyout, filename]

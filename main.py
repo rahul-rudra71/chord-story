@@ -3,7 +3,6 @@ import decode_notes as dn
 from pygame.locals import *
 from pygame import mixer
 from Obstacle import Obstacle
-from menu import *
 
 # os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
@@ -57,7 +56,6 @@ def main_menu():
         if classic_button.collidepoint((mousex, mousey)):
             if (click):
                 # play the game if the button is pressed
-                get_music()
                 run_game()
 
         # render button
@@ -109,7 +107,7 @@ def paused():
         if continue_button.collidepoint((mousex, mousey)):
             if (click):
                 unpause()
-                return 
+                return
         if quit_button.collidepoint((mousex, mousey)):
             if (click):
                 pause_screen = False
@@ -186,28 +184,6 @@ def game_over():
     screen.blit(text, text_rect)
     mixer.music.stop()
 
-def get_music():
-    pygame.init()
-
-    screen = pygame.display.set_mode((800, 600))
-    game_state = GameState.TITLE
-    player = Player()
-    while True:
-        if game_state == GameState.TITLE:
-            game_state = title_screen(screen)
-
-        if game_state == GameState.CREATEGAME:
-            game_state = create_level(screen, player)
-
-        if game_state == GameState.CREATE_LEVEL:
-            keys = decode_notes.decode()
-            print(keys)
-            game_state = create_level(screen, player)
-
-        if game_state == GameState.QUIT:
-            pygame.quit()
-            return
-
 #def update_lives():
     #lives_display = pygame.Rect(40, 340, 95, 50)
 
@@ -222,7 +198,7 @@ def get_music():
     #clock.tick(60)
 
 def run_game():
-    global pause 
+    global pause
     play_game = True
     running = True
 
@@ -238,8 +214,10 @@ def run_game():
 
     player_rect = pygame.Rect(100, 100, 5, 13)
 
-    notes = dn.decode('PinkPanther30.wav')
-    mixer.music.load('PinkPanther30.wav')
+    decode = dn.decode()
+
+    notes = decode[0]
+    mixer.music.load(decode[1])
     noteKeys = list(notes.keys())
 
     noteTime = noteKeys[0]
