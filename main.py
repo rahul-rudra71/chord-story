@@ -30,18 +30,21 @@ y = 0
 x1 = 0
 y1 = -h
 
+pinkbackground = pygame.image.load("pink.png")
+difficulty = 0.25
+
 player_lives = 3
 
 scroll = 1
 
 obstacles = []
 
+global running
 running = True
-
-click = False
 
 
 def main_menu():
+    click = False
     menu_open = True
     while menu_open:
 
@@ -57,6 +60,7 @@ def main_menu():
         if classic_button.collidepoint((mousex, mousey)):
             if (click):
                 # play the game if the button is pressed
+                select_difficulty()
                 run_game()
 
         # render button
@@ -81,6 +85,82 @@ def main_menu():
         clock.tick(60)
 
 
+def select_difficulty():
+    click = False
+    select = True
+
+    global difficulty
+
+    while select:
+        display.fill((224, 132, 132))  # clear screen by filling it with pink
+
+        screen.blit(pinkbackground, (0, 0))
+
+        font = pygame.font.Font('freesansbold.ttf', 45)
+        text = font.render("CHOOSE THE DIFFICULTY", True, (0, 0, 0))
+        text2 = font.render("CHOOSE THE DIFFICULTY", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(screen.get_width() / 2, 45))
+        text_rect2 = text.get_rect(center=((screen.get_width() / 2) + 2, 47))
+        screen.blit(text, text_rect)
+        screen.blit(text2, text_rect2)
+
+        mousex, mousey = pygame.mouse.get_pos()
+
+        easy_button = pygame.Rect(screen.get_width() / 2 - 72.5, 100, 145, 60)
+        medium_button = pygame.Rect(screen.get_width() / 2 - 72.5, 200, 145, 60)
+        hard_button = pygame.Rect(screen.get_width() / 2 - 72.5, 300, 145, 60)
+
+        if easy_button.collidepoint((mousex, mousey)):
+            if (click):
+                difficulty = 0.5
+                select = False
+        if medium_button.collidepoint((mousex, mousey)):
+            if (click):
+                difficulty = 0.35
+                select = False
+        if hard_button.collidepoint((mousex, mousey)):
+            if (click):
+                difficulty = 0.25
+                select = False
+
+        # render buttons
+        pygame.draw.rect(screen, (255, 255, 255), easy_button)
+        pygame.draw.rect(screen, (255, 255, 255), medium_button)
+        pygame.draw.rect(screen, (255, 255, 255), hard_button)
+
+        # easy text
+        font = pygame.font.Font('freesansbold.ttf', 35)
+        text = font.render("EASY", True, (0, 0, 0))
+        text2 = font.render("EASY", True, (224, 132, 132))
+        screen.blit(text, (247, 116))
+        screen.blit(text2, (249, 118))
+
+        # medium text
+        font = pygame.font.Font('freesansbold.ttf', 30)
+        text = font.render("MEDIUM", True, (0, 0, 0))
+        text2 = font.render("MEDIUM", True, (224, 132, 132))
+        screen.blit(text, (237, 216))
+        screen.blit(text2, (239, 218))
+
+        # hard text
+        font = pygame.font.Font('freesansbold.ttf', 35)
+        text = font.render("HARD", True, (0, 0, 0))
+        text2 = font.render("HARD", True, (224, 132, 132))
+        screen.blit(text, (247, 316))
+        screen.blit(text2, (249, 318))
+
+        for event in pygame.event.get():  # event loop
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        pygame.display.update()
+        clock.tick(60)
+
+
 def unpause():
     global pause
     pygame.mixer.music.unpause()
@@ -88,7 +168,7 @@ def unpause():
 
 
 def paused():
-    click = 0
+    click = False
     pause_screen = True
     while pause_screen:
 
@@ -113,8 +193,7 @@ def paused():
         if quit_button.collidepoint((mousex, mousey)):
             if (click):
                 pause_screen = False
-                pygame.quit()
-                sys.exit()
+                main_menu()
 
         # render buttons
         pygame.draw.rect(screen, (156, 17, 21), continue_button)
@@ -131,6 +210,58 @@ def paused():
         for event in pygame.event.get():  # event loop
             if event.type == QUIT:
                 pause_screen = False
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        pygame.display.update()
+        clock.tick(60)
+
+
+def restarting():
+    click = False
+
+    restart_screen = True
+
+    global running
+    while restart_screen:
+
+        mousex, mousey = pygame.mouse.get_pos()
+
+        # create the buttons used to get back into the game or quit
+        restart_button = pygame.Rect(470, 340, 95, 50)
+        quit_button = pygame.Rect(40, 340, 95, 50)
+
+        if restart_button.collidepoint((mousex, mousey)):
+            if (click):
+                global player_lives
+                player_lives = 3
+                restart_screen = False
+                break
+        if quit_button.collidepoint((mousex, mousey)):
+            if (click):
+                player_lives = 3
+                restart_screen = False
+                running = True
+                main_menu()
+
+        # render buttons
+        pygame.draw.rect(screen, (52, 224, 69), restart_button)
+        pygame.draw.rect(screen, (156, 17, 21), quit_button)
+
+        button_font = pygame.font.Font('freesansbold.ttf', 17)
+        restart_text = button_font.render("RESTART", True, (255, 255, 255))
+        quit_text = button_font.render("QUIT", True, (255, 255, 255))
+        screen.blit(restart_text, (480, 355))
+        screen.blit(quit_text, (65, 355))
+
+        click = False
+
+        for event in pygame.event.get():  # event loop
+            if event.type == QUIT:
+                restart_screen = False
                 pygame.quit()
                 sys.exit()
             if event.type == MOUSEBUTTONDOWN:
@@ -228,7 +359,7 @@ def run_game():
 
     player_rect = pygame.Rect(100, 100, 5, 13)
 
-    decode = dn.decode()
+    decode = dn.decode(difficulty)
 
     notes = decode[0]
     mixer.music.load(decode[1])
@@ -290,6 +421,7 @@ def run_game():
         player_rect, collisions = move(player_rect, player_movement, tile_rects)
 
         running = obstacle_collision(player_rect, obstacles)
+        alive = running
 
         for event in pygame.event.get():  # event loop
             if event.type == QUIT:
@@ -327,7 +459,6 @@ def run_game():
 
                 if keyIndex > len(noteKeys) - 1:
                     won = True
-                    # running = False
                     break
 
                 noteTime = noteKeys[keyIndex]
@@ -344,11 +475,32 @@ def run_game():
         # display the lives
         update_lives()
 
-        if not running:
+        if not alive:
             game_over()
+            restarting()
+            alive = True
+
+            noteTime = noteKeys[0]
+            stringNo = notes[noteTime]
+
+            NEWOBSTACLE = USEREVENT + 1
+            pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
+
+            keyIndex = 0
+            mixer.music.play()
 
         if won:
             game_won()
+            restarting()
+
+            noteTime = noteKeys[0]
+            stringNo = notes[noteTime]
+
+            NEWOBSTACLE = USEREVENT + 1
+            pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
+
+            keyIndex = 0
+            mixer.music.play()
 
         pygame.display.update()
         clock.tick(120)

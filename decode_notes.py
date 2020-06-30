@@ -4,11 +4,13 @@ import random
 from tkinter import filedialog
 from tkinter import *
 
-def detect_pitch(magnitudes, pitches, t):
-  index = magnitudes[:, t].argmax()
-  pitch = pitches[index, t]
 
-  return pitch
+def detect_pitch(magnitudes, pitches, t):
+    index = magnitudes[:, t].argmax()
+    pitch = pitches[index, t]
+
+    return pitch
+
 
 def trim_onsets(onsets, times, offset):
     # Enforce space between onsets used for obstacle generation so player
@@ -26,12 +28,14 @@ def trim_onsets(onsets, times, offset):
 
     return onsets, times
 
+
 def trim_times(times):
     # Trim onset times to 2 decimal places
     for index, time in enumerate(times):
         times[index] = round(time, 2)
 
     return times
+
 
 def assign_string(nt, prev):
     # string 0 = E4 - B5
@@ -90,12 +94,13 @@ def assign_string(nt, prev):
 
     return out
 
+
 def decode(note_offset):
-    #open gui to enable user to select file
+    # open gui to enable user to select file
     root = Tk()
     root.withdraw()
     root.update()
-    filename = filedialog.askopenfilename(filetypes = (("wav files","*.wav"),("mp3 files","*.mp3")))
+    filename = filedialog.askopenfilename(filetypes=(("wav files", "*.wav"), ("mp3 files", "*.mp3")))
     root.destroy()
 
     clip, sample = librosa.load(filename)
