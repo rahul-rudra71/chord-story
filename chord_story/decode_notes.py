@@ -4,20 +4,22 @@ import random
 from tkinter import filedialog
 from tkinter import *
 
+
 def detect_pitch(magnitudes, pitches, t):
-  index = magnitudes[:, t].argmax()
-  pitch = pitches[index, t]
+    index = magnitudes[:, t].argmax()
+    pitch = pitches[index, t]
 
-  return pitch
+    return pitch
 
-def trim_onsets(onsets, times):
+
+def trim_onsets(onsets, times, offset):
     # Enforce space between onsets used for obstacle generation so player
     # has an appropriate amount of time for movement
     last = 0
     del_array = []
     # Remove onsets from array to generate obstacles that are too close together to be avoided (~<0.5 s)
     for index, current in enumerate(times):
-        if current - last < 0.5:
+        if current - last < offset:
             del_array.append(index)
         else:
             last = current
@@ -26,12 +28,14 @@ def trim_onsets(onsets, times):
 
     return onsets, times
 
+
 def trim_times(times):
     # Trim onset times to 2 decimal places
     for index, time in enumerate(times):
         times[index] = round(time, 2)
 
     return times
+
 
 def assign_string(nt, prev):
     # string 0 = E4 - B5
@@ -90,12 +94,13 @@ def assign_string(nt, prev):
 
     return out
 
-def decode():
-    #open gui to enable user to select file
+
+def decode(note_offset):
+    # open gui to enable user to select file
     root = Tk()
     root.withdraw()
     root.update()
-    filename = filedialog.askopenfilename(filetypes = (("wav files","*.wav"),("mp3 files","*.mp3")))
+    filename = filedialog.askopenfilename(filetypes=(("wav files", "*.wav"), ("mp3 files", "*.mp3")))
     root.destroy()
 
     clip, sample = librosa.load(filename)
@@ -109,7 +114,7 @@ def decode():
     timestamps = librosa.frames_to_time(onset_frames, sr=sample)
 
     # Trim onset array
-    trimmed_onset, new_times = trim_onsets(onset_frames, timestamps)
+    trimmed_onset, new_times = trim_onsets(onset_frames, timestamps, note_offset)
     trimmed_times = trim_times(new_times)
 
     x = 0
