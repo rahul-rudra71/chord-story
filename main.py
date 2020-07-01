@@ -1,8 +1,8 @@
 import pygame, os, sys, random
-import decode_notes as dn
+import chord_story.decode_notes as dn
 from pygame.locals import *
 from pygame import mixer
-from Obstacle import Obstacle
+from chord_story.Obstacle import Obstacle
 
 # os.environ['SDL_AUDIODRIVER'] = 'dsp'
 
@@ -19,9 +19,9 @@ screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
 
 display = pygame.Surface((300, 200))  # used as the surface for rendering, which is scaled
 
-chord = pygame.image.load('mainmenu.png')
+chord = pygame.image.load('chord_story/mainmenu.png')
 
-background = pygame.image.load('background.png')
+background = pygame.image.load('chord_story/background.png')
 background_size = background.get_size()
 background_rect = background.get_rect()
 w, h = background_size
@@ -30,7 +30,7 @@ y = 0
 x1 = 0
 y1 = -h
 
-pinkbackground = pygame.image.load("pink.png")
+pinkbackground = pygame.image.load("chord_story/pink.png")
 difficulty = 0.25
 
 player_lives = 3
@@ -354,7 +354,7 @@ def run_game():
 
     true_scroll = [0, 0]
 
-    player_img = pygame.image.load('player.png').convert()
+    player_img = pygame.image.load('chord_story/player.png').convert()
     player_img.set_colorkey((255, 255, 255))
 
     player_rect = pygame.Rect(100, 100, 5, 13)
@@ -504,7 +504,3 @@ def run_game():
 
         pygame.display.update()
         clock.tick(120)
-
-
-if __name__ == "__main__":
-    main_menu()
