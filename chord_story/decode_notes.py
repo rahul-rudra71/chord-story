@@ -100,7 +100,7 @@ def decode(note_offset):
     root = Tk()
     root.withdraw()
     root.update()
-    filename = filedialog.askopenfilename(filetypes=(("wav files", "*.wav")))
+    filename = filedialog.askopenfilename(filetypes=[("wav files", "*.wav")])
     root.destroy()
 
     clip, sample = librosa.load(filename)
