@@ -57,14 +57,17 @@ def main_menu():
         # create the classic mode button
         classic_button = pygame.Rect(50, 50, 150, 60)
 
+        # render button
+        pygame.draw.rect(screen, (156, 17, 21), classic_button)
+
+        highlight = (232, 58, 63)
+
         if classic_button.collidepoint((mousex, mousey)):
+            pygame.draw.rect(screen, highlight, classic_button)
             if (click):
                 # play the game if the button is pressed
                 select_difficulty()
                 run_game()
-
-        # render button
-        pygame.draw.rect(screen, (156, 17, 21), classic_button)
 
         classic_font = pygame.font.Font('freesansbold.ttf', 17)
         classic_text = classic_font.render("CLASSIC MODE", True, (255, 255, 255))
@@ -110,23 +113,28 @@ def select_difficulty():
         medium_button = pygame.Rect(screen.get_width() / 2 - 72.5, 200, 145, 60)
         hard_button = pygame.Rect(screen.get_width() / 2 - 72.5, 300, 145, 60)
 
-        if easy_button.collidepoint((mousex, mousey)):
-            if (click):
-                difficulty = 0.5
-                select = False
-        if medium_button.collidepoint((mousex, mousey)):
-            if (click):
-                difficulty = 0.35
-                select = False
-        if hard_button.collidepoint((mousex, mousey)):
-            if (click):
-                difficulty = 0.25
-                select = False
-
         # render buttons
         pygame.draw.rect(screen, (255, 255, 255), easy_button)
         pygame.draw.rect(screen, (255, 255, 255), medium_button)
         pygame.draw.rect(screen, (255, 255, 255), hard_button)
+
+        highlight = (212, 221, 255)
+
+        if easy_button.collidepoint((mousex, mousey)):
+            pygame.draw.rect(screen, highlight, easy_button)
+            if (click):
+                difficulty = 0.5
+                select = False
+        if medium_button.collidepoint((mousex, mousey)):
+            pygame.draw.rect(screen, highlight, medium_button)
+            if (click):
+                difficulty = 0.35
+                select = False
+        if hard_button.collidepoint((mousex, mousey)):
+            pygame.draw.rect(screen, highlight, hard_button)
+            if (click):
+                difficulty = 0.25
+                select = False
 
         # easy text
         font = pygame.font.Font('freesansbold.ttf', 35)
@@ -186,18 +194,22 @@ def paused():
         text_rect = pause_text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
         screen.blit(pause_text, text_rect)
 
+        # render buttons
+        pygame.draw.rect(screen, (156, 17, 21), continue_button)
+        pygame.draw.rect(screen, (156, 17, 21), quit_button)
+
+        highlight = (232, 58, 63)
+
         if continue_button.collidepoint((mousex, mousey)):
+            pygame.draw.rect(screen, highlight, continue_button)
             if (click):
                 unpause()
                 return
         if quit_button.collidepoint((mousex, mousey)):
+            pygame.draw.rect(screen, highlight, quit_button)
             if (click):
                 pause_screen = False
                 main_menu()
-
-        # render buttons
-        pygame.draw.rect(screen, (156, 17, 21), continue_button)
-        pygame.draw.rect(screen, (156, 17, 21), quit_button)
 
         button_font = pygame.font.Font('freesansbold.ttf', 17)
         continue_text = button_font.render("CONTINUE", True, (255, 255, 255))
@@ -234,22 +246,27 @@ def restarting():
         restart_button = pygame.Rect(470, 340, 95, 50)
         quit_button = pygame.Rect(40, 340, 95, 50)
 
+        # render buttons
+        pygame.draw.rect(screen, (52, 224, 69), restart_button)
+        pygame.draw.rect(screen, (156, 17, 21), quit_button)
+
+        highlight1 = (110, 255, 124)
+        highlight2 = (232, 58, 63)
+
         if restart_button.collidepoint((mousex, mousey)):
+            pygame.draw.rect(screen, highlight1, restart_button)
             if (click):
                 global player_lives
                 player_lives = 3
                 restart_screen = False
                 break
         if quit_button.collidepoint((mousex, mousey)):
+            pygame.draw.rect(screen, highlight2, quit_button)
             if (click):
                 player_lives = 3
                 restart_screen = False
                 running = True
                 main_menu()
-
-        # render buttons
-        pygame.draw.rect(screen, (52, 224, 69), restart_button)
-        pygame.draw.rect(screen, (156, 17, 21), quit_button)
 
         button_font = pygame.font.Font('freesansbold.ttf', 17)
         restart_text = button_font.render("RESTART", True, (255, 255, 255))
