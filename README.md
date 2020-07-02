@@ -10,7 +10,7 @@ Apt-Get modules needed:
     sudo apt-get install python3-tk
 
 Pip install: 
-  In directory with setup.py, run "pip3 install ."
+  In directory with setup.py, run "pip install ."
   
   Executable line to run: "chordstory"
 
@@ -21,3 +21,5 @@ Controls:
 Up/Down Arrow Keys --> moving vertically between strings
 Left/Right Arrow Keys --> moving horizontally along the current string
 p Key --> pause the game (when paused you may either resume the game or quit the level and return to main menu)
+
+This project requires an Ubuntu 20.04 VM to run.
