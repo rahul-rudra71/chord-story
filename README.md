@@ -10,7 +10,7 @@ Apt-Get modules needed:
     sudo apt-get install python3-tk
 
 Pip install: 
-  In directory with setup.py, run "pip install ."
+  In directory with setup.py, run "pip3 install ."
   
   Executable line to run: "chordstory"
 
