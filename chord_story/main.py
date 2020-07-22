@@ -11,17 +11,19 @@ clock = pygame.time.Clock()
 pygame.init()
 mixer.init()
 
-pygame.display.set_caption('Chord Story')
+pygame.display.set_caption("Chord Story")
 
 WINDOW_SIZE = (600, 400)
 
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
 
-display = pygame.Surface((300, 200))  # used as the surface for rendering, which is scaled
+display = pygame.Surface(
+    (300, 200)
+)  # used as the surface for rendering, which is scaled
 
-chord = pygame.image.load('chord_story/mainmenu.png')
+chord = pygame.image.load("assets/mainmenu.png")
 
-background = pygame.image.load('chord_story/background.png')
+background = pygame.image.load("assets/background.png")
 background_size = background.get_size()
 background_rect = background.get_rect()
 w, h = background_size
@@ -30,7 +32,7 @@ y = 0
 x1 = 0
 y1 = -h
 
-pinkbackground = pygame.image.load("chord_story/pink.png")
+pinkbackground = pygame.image.load("assets/pink.png")
 difficulty = 0.25
 
 player_lives = 3
@@ -64,12 +66,12 @@ def main_menu():
 
         if classic_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, classic_button)
-            if (click):
+            if click:
                 # play the game if the button is pressed
                 select_difficulty()
                 run_game()
 
-        classic_font = pygame.font.Font('freesansbold.ttf', 17)
+        classic_font = pygame.font.Font("freesansbold.ttf", 17)
         classic_text = classic_font.render("CLASSIC MODE", True, (255, 255, 255))
         screen.blit(classic_text, (59, 72))
 
@@ -99,7 +101,7 @@ def select_difficulty():
 
         screen.blit(pinkbackground, (0, 0))
 
-        font = pygame.font.Font('freesansbold.ttf', 45)
+        font = pygame.font.Font("freesansbold.ttf", 45)
         text = font.render("CHOOSE THE DIFFICULTY", True, (0, 0, 0))
         text2 = font.render("CHOOSE THE DIFFICULTY", True, (255, 255, 255))
         text_rect = text.get_rect(center=(screen.get_width() / 2, 45))
@@ -122,36 +124,36 @@ def select_difficulty():
 
         if easy_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, easy_button)
-            if (click):
+            if click:
                 difficulty = 0.5
                 select = False
         if medium_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, medium_button)
-            if (click):
+            if click:
                 difficulty = 0.35
                 select = False
         if hard_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, hard_button)
-            if (click):
+            if click:
                 difficulty = 0.25
                 select = False
 
         # easy text
-        font = pygame.font.Font('freesansbold.ttf', 35)
+        font = pygame.font.Font("freesansbold.ttf", 35)
         text = font.render("EASY", True, (0, 0, 0))
         text2 = font.render("EASY", True, (224, 132, 132))
         screen.blit(text, (247, 116))
         screen.blit(text2, (249, 118))
 
         # medium text
-        font = pygame.font.Font('freesansbold.ttf', 30)
+        font = pygame.font.Font("freesansbold.ttf", 30)
         text = font.render("MEDIUM", True, (0, 0, 0))
         text2 = font.render("MEDIUM", True, (224, 132, 132))
         screen.blit(text, (237, 216))
         screen.blit(text2, (239, 218))
 
         # hard text
-        font = pygame.font.Font('freesansbold.ttf', 35)
+        font = pygame.font.Font("freesansbold.ttf", 35)
         text = font.render("HARD", True, (0, 0, 0))
         text2 = font.render("HARD", True, (224, 132, 132))
         screen.blit(text, (247, 316))
@@ -189,9 +191,11 @@ def paused():
         quit_button = pygame.Rect(40, 340, 95, 50)
 
         # pause message on the screen
-        pause_font = pygame.font.Font('freesansbold.ttf', 80)
+        pause_font = pygame.font.Font("freesansbold.ttf", 80)
         pause_text = pause_font.render("PAUSE", True, (255, 0, 0))
-        text_rect = pause_text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+        text_rect = pause_text.get_rect(
+            center=(screen.get_width() / 2, screen.get_height() / 2)
+        )
         screen.blit(pause_text, text_rect)
 
         # render buttons
@@ -202,16 +206,16 @@ def paused():
 
         if continue_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, continue_button)
-            if (click):
+            if click:
                 unpause()
                 return
         if quit_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, quit_button)
-            if (click):
+            if click:
                 pause_screen = False
                 main_menu()
 
-        button_font = pygame.font.Font('freesansbold.ttf', 17)
+        button_font = pygame.font.Font("freesansbold.ttf", 17)
         continue_text = button_font.render("CONTINUE", True, (255, 255, 255))
         quit_text = button_font.render("QUIT", True, (255, 255, 255))
         screen.blit(continue_text, (472, 355))
@@ -255,20 +259,20 @@ def restarting():
 
         if restart_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight1, restart_button)
-            if (click):
+            if click:
                 global player_lives
                 player_lives = 3
                 restart_screen = False
                 break
         if quit_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight2, quit_button)
-            if (click):
+            if click:
                 player_lives = 3
                 restart_screen = False
                 running = True
                 main_menu()
 
-        button_font = pygame.font.Font('freesansbold.ttf', 17)
+        button_font = pygame.font.Font("freesansbold.ttf", 17)
         restart_text = button_font.render("RESTART", True, (255, 255, 255))
         quit_text = button_font.render("QUIT", True, (255, 255, 255))
         screen.blit(restart_text, (480, 355))
@@ -298,7 +302,7 @@ def collision_test(rect, tiles):
 
 
 def move(rect, movement, tiles):
-    collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
+    collision_types = {"top": False, "bottom": False, "right": False, "left": False}
     rect.x += movement[0]
 
     if rect.right > 299:
@@ -311,7 +315,7 @@ def move(rect, movement, tiles):
     for tile in hit_list:
         if movement[1] > 0:
             rect.bottom = tile.top
-            collision_types['bottom'] = True
+            collision_types["bottom"] = True
         # elif movement[1] < 0:
         #     rect.top = tile.bottom
         #     collision_types['top'] = True
@@ -332,7 +336,7 @@ def obstacle_collision(player, obstacles):
 
 
 def game_over():
-    font = pygame.font.Font('freesansbold.ttf', 80)
+    font = pygame.font.Font("freesansbold.ttf", 80)
     text = font.render("GAME OVER", True, (255, 0, 0))
     text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
@@ -340,7 +344,7 @@ def game_over():
 
 
 def game_won():
-    font = pygame.font.Font('freesansbold.ttf', 80)
+    font = pygame.font.Font("freesansbold.ttf", 80)
     text = font.render("YOU WIN", True, (0, 255, 0))
     text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
@@ -352,7 +356,7 @@ def update_lives():
 
     pygame.draw.rect(screen, (255, 255, 255), lives_display)
 
-    lives_font = pygame.font.Font('freesansbold.ttf', 12)
+    lives_font = pygame.font.Font("freesansbold.ttf", 12)
     player_lives_str = str(player_lives)
     lives_text = lives_font.render("LIVES: " + player_lives_str, True, (0, 0, 0))
     screen.blit(lives_text, (22, 375))
@@ -371,7 +375,7 @@ def run_game():
 
     true_scroll = [0, 0]
 
-    player_img = pygame.image.load('chord_story/player.png').convert()
+    player_img = pygame.image.load("assets/player.png").convert()
     player_img.set_colorkey((255, 255, 255))
 
     player_rect = pygame.Rect(100, 100, 5, 13)
@@ -396,7 +400,9 @@ def run_game():
 
         # scrolling background
         display.blit(background, background_rect)  # left image
-        display.blit(background, background_rect.move(background_rect.width, 0))  # right image
+        display.blit(
+            background, background_rect.move(background_rect.width, 0)
+        )  # right image
         if running:
             background_rect.move_ip(-1, 0)
         if background_rect.right == 0:
