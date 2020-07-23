@@ -1,8 +1,9 @@
-import random, pygame
+import random
+import pygame
 
 
 class Powerup:
-    def __init__(self, type, color = (0, 0, 0)):
+    def __init__(self, type, color=(0, 0, 0)):
 
         # generate a random number 0-5 to pick a string for the obstacle to spawn
         num = random.randint(0, 5)

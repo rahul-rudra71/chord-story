@@ -1,4 +1,5 @@
-import pygame, os, sys, random
+import pygame
+import sys
 import chord_story.decode_notes as dn
 from pygame.locals import *
 from pygame import mixer
@@ -7,7 +8,6 @@ from chord_story.Obstacle import Obstacle
 from chord_story.Powerup import Powerup
 from chord_story.Player import Player
 
-
 # initialize display
 clock = pygame.time.Clock()
 pygame.init()
@@ -15,13 +15,13 @@ mixer.init()
 pygame.display.set_caption("Chord Story")
 WINDOW_SIZE = (600, 400)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
-display = pygame.Surface(
-    (300, 200)
-)  # used as the surface for rendering, which is scaled
+# used as the surface for rendering, which is scaled
+display = pygame.Surface((300, 200))
 
 # initialize game and player
 game = Game()
 player = Player()
+
 
 # opens the main menu screen
 def main_menu():
@@ -52,7 +52,8 @@ def main_menu():
                 run_game()
 
         classic_font = pygame.font.Font("freesansbold.ttf", 17)
-        classic_text = classic_font.render("CLASSIC MODE", True, (255, 255, 255))
+        classic_text = classic_font.render(
+            "CLASSIC MODE", True, (255, 255, 255))
         screen.blit(classic_text, (59, 72))
 
         click = False
@@ -93,7 +94,8 @@ def select_difficulty():
         mousex, mousey = pygame.mouse.get_pos()
 
         easy_button = pygame.Rect(screen.get_width() / 2 - 72.5, 100, 145, 60)
-        medium_button = pygame.Rect(screen.get_width() / 2 - 72.5, 200, 145, 60)
+        medium_button = pygame.Rect(
+            screen.get_width() / 2 - 72.5, 200, 145, 60)
         hard_button = pygame.Rect(screen.get_width() / 2 - 72.5, 300, 145, 60)
 
         # render buttons
@@ -185,7 +187,6 @@ def paused():
         if continue_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, continue_button)
             if click:
-                # unpause()
                 game.state = "running"
                 pygame.mixer.music.unpause()
                 return
@@ -225,7 +226,6 @@ def paused():
 def restarting():
     click = False
 
-    # global running
     while game.state == "restarting":
         mousex, mousey = pygame.mouse.get_pos()
 
@@ -292,7 +292,8 @@ def collision_test(rect, tiles):
 
 # move the player and ground player on string
 def move(rect, movement, tiles):
-    collision_types = {"top": False, "bottom": False, "right": False, "left": False}
+    collision_types = {"top": False, "bottom": False,
+                       "right": False, "left": False}
     rect.x += movement[0]
 
     # keep player withing window bounds
@@ -312,10 +313,10 @@ def move(rect, movement, tiles):
 
 # check if player has hit an obstacle
 def obstacle_collision(player_rect, obstacles):
-
     # if collision, decrement lives
     for obstacle in obstacles:
         if player_rect.colliderect(obstacle):
+            # TODO: add damage sound effect
             player.lives = player.lives - 1
             obstacles.remove(obstacle)
         if obstacle.rect.left < -15:
@@ -325,35 +326,39 @@ def obstacle_collision(player_rect, obstacles):
 
 
 def powerup_collision(player_rect, powerups):
-
-    if player.powerup != "phaser":
-        for powerup in powerups:
-            if player_rect.colliderect(powerup):
-                if powerup.type == "life":
-                    player.lives += 1
-                if powerup.type == "phaser":
-                    player.powerup = "phaser"
-                    # TODO: change player sprite for phasing powerup
-                    pygame.time.set_timer(game.events["PHASERTIMER"], 5000)
-                powerups.remove(powerup)
-            if powerup.rect.left < -15:
-                powerups.remove(powerup)
+    for powerup in powerups:
+        if player_rect.colliderect(powerup):
+            if powerup.type == "life":
+                # TODO: add 1up sound effect
+                player.lives += 1
+            if powerup.type == "phaser":
+                player.powerup = "phaser"
+                # TODO: add powerup sound effect
+                player.img = pygame.image.load("assets/player_invincible.png").convert_alpha()
+                # player.img.set_colorkey((255, 255, 255))
+                pygame.time.set_timer(game.events["PHASERTIMER"], 5000, True)
+            powerups.remove(powerup)
+        if powerup.rect.left < -15:
+            powerups.remove(powerup)
 
 
 # display the game over screen
 def game_over():
+    mixer.music.stop()
+    # TODO: add dead sound effect
     font = pygame.font.Font("freesansbold.ttf", 80)
     text = font.render("GAME OVER", True, (255, 0, 0))
-    text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+    text_rect = text.get_rect(
+        center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
-    mixer.music.stop()
 
 
 # display the game won screen
 def game_won():
     font = pygame.font.Font("freesansbold.ttf", 80)
     text = font.render("YOU WIN", True, (0, 255, 0))
-    text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+    text_rect = text.get_rect(
+        center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
     mixer.music.stop()
 
@@ -366,7 +371,8 @@ def update_lives():
 
     lives_font = pygame.font.Font("freesansbold.ttf", 12)
     player_lives_str = str(player.lives)
-    lives_text = lives_font.render("LIVES: " + player_lives_str, True, (0, 0, 0))
+    lives_text = lives_font.render(
+        "LIVES: " + player_lives_str, True, (0, 0, 0))
     screen.blit(lives_text, (22, 375))
 
 
@@ -423,10 +429,10 @@ def run_game():
     noteTime = noteKeys[0]
     stringNo = notes[noteTime]
 
-    pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000))
+    pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
     pygame.time.set_timer(game.events["SCOREUP"], 1000)
-    pygame.time.set_timer(game.events["SPAWNLIFE"], 6000)
-    pygame.time.set_timer(game.events["SPAWNPHASER"], 10000)
+    pygame.time.set_timer(game.events["SPAWNLIFE"], 6000, True)
+    pygame.time.set_timer(game.events["SPAWNPHASER"], 10000, True)
 
     keyIndex = 0
     mixer.music.play()
@@ -475,10 +481,13 @@ def run_game():
                 vertical_momentum = 3
 
         # check for collisions and grounding
-        player.rect, collisions = move(player.rect, player_movement, tile_rects)
+        player.rect, collisions = move(
+            player.rect, player_movement, tile_rects)
 
         # death if collision with obstacle
-        obstacle_collision(player.rect, game.obstacles)
+        # player passes through and ignores obstacles if possessing phaser ability
+        if player.powerup != "phaser":
+            obstacle_collision(player.rect, game.obstacles)
 
         powerup_collision(player.rect, game.powerups)
 
@@ -491,72 +500,73 @@ def run_game():
                 pygame.quit()
                 sys.exit()
 
-            # move player
-            if event.type == KEYDOWN and game.state == "running":
-                if event.key == pygame.K_p:
-                    # pause = True
-                    game.state = "paused"
-                    paused()
-                if event.key == K_RIGHT:
-                    moving_right = True
-                if event.key == K_LEFT:
-                    moving_left = True
-                if event.key == K_UP:
-                    if air_timer < 6:
-                        vertical_momentum = -3
-                if event.key == K_DOWN:
-                    if air_timer < 6:
-                        vertical_momentum = 3
-                    player.rect.y += 12
-                    if player.rect.y > 166:
-                        player.rect.y = 166
+            if game.state == "running":
+                # move player
+                if event.type == KEYDOWN:
+                    if event.key == pygame.K_p:
+                        game.state = "paused"
+                        paused()
+                    if event.key == K_RIGHT:
+                        moving_right = True
+                    if event.key == K_LEFT:
+                        moving_left = True
+                    if event.key == K_UP:
+                        if air_timer < 6:
+                            vertical_momentum = -3
+                    if event.key == K_DOWN:
+                        if air_timer < 6:
+                            vertical_momentum = 3
+                        player.rect.y += 12
+                        if player.rect.y > 166:
+                            player.rect.y = 166
 
-            # stop moving on release
-            if event.type == KEYUP and game.state == "running":
-                if event.key == K_RIGHT:
-                    moving_right = False
-                if event.key == K_LEFT:
-                    moving_left = False
+                # stop moving on release
+                if event.type == KEYUP:
+                    if event.key == K_RIGHT:
+                        moving_right = False
+                    if event.key == K_LEFT:
+                        moving_left = False
 
-            # spawn a new obstacle
-            if event.type == game.events["NEWOBSTACLE"] and game.state == "running":
-                obstacle = Obstacle(stringNo)
-                game.obstacles.append(obstacle)
+                # spawn a new obstacle
+                if event.type == game.events["NEWOBSTACLE"]:
+                    obstacle = Obstacle(stringNo)
+                    game.obstacles.append(obstacle)
 
-                keyIndex = keyIndex + 1
+                    keyIndex = keyIndex + 1
 
-                if keyIndex > len(noteKeys) - 1:
-                    game.state = "won"
-                    break
+                    if keyIndex > len(noteKeys) - 1:
+                        game.state = "won"
+                        break
 
-                noteTime = noteKeys[keyIndex]
+                    noteTime = noteKeys[keyIndex]
 
-                noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
-                stringNo = notes[noteTime]
+                    noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
+                    stringNo = notes[noteTime]
 
-                # set the timer to spawn the next obstacle
-                pygame.time.set_timer(
-                    game.events["NEWOBSTACLE"], int(noteDiffTime * 1000)
-                )
+                    # set the timer to spawn the next obstacle
+                    pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteDiffTime * 1000), True)
 
-            # increase the score every second; higher difficulty = greater increment
-            if event.type == game.events["SCOREUP"] and game.state == "running":
-                player.score += (1 - game.difficulty) * 20
+                # increase the score every second; higher difficulty = greater increment
+                if event.type == game.events["SCOREUP"]:
+                    player.score += (1 - game.difficulty) * 20
 
-            # spawn a life every minute
-            if event.type == game.events["SPAWNLIFE"] and game.state == "running":
-                life = Powerup("life", (0, 128, 0))
-                game.powerups.append(life)
+                # spawn a life every minute
+                if event.type == game.events["SPAWNLIFE"]:
+                    life = Powerup("life", (0, 128, 0))
+                    game.powerups.append(life)
+                    pygame.time.set_timer(game.events["SPAWNLIFE"], 6000, True)
 
-            # spawn a phaser powerup
-            if event.type == game.events["SPAWNPHASER"] and game.state == "running":
-                phaser = Powerup("phaser", (0, 255, 255))
-                game.powerups.append(phaser)
+                # spawn a phaser powerup
+                if event.type == game.events["SPAWNPHASER"]:
+                    phaser = Powerup("phaser", (0, 255, 255))
+                    game.powerups.append(phaser)
+                    pygame.time.set_timer(game.events["SPAWNPHASER"], 10000, True)
 
-            # phaser powerup lasts for 5s
-            if event.type == game.events["PHASERTIMER"] and player.powerup == "phaser":
-                player.powerup == None
-                # TODO: change player sprite back to normal
+                # phaser powerup lasts for 5s
+                if event.type == game.events["PHASERTIMER"] and player.powerup == "phaser":
+                    player.powerup = None
+                    player.img = pygame.image.load("assets/player.png").convert()
+                    player.img.set_colorkey((255, 255, 255))
 
         display.blit(player.img, (player.rect.x, player.rect.y))
 
@@ -575,7 +585,7 @@ def run_game():
             noteTime = noteKeys[0]
             stringNo = notes[noteTime]
 
-            pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000))
+            pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
 
             keyIndex = 0
             mixer.music.play()
@@ -585,11 +595,14 @@ def run_game():
             game_won()
             game.state = "restarting"
             restarting()
+            # game.state == "running"
+            game.obstacles.clear()
+            game.powerups.clear()
 
             noteTime = noteKeys[0]
             stringNo = notes[noteTime]
 
-            pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000))
+            pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
 
             keyIndex = 0
             mixer.music.play()

@@ -1,12 +1,10 @@
-import random, pygame
+
+import random
+import pygame
 
 
 class Obstacle:
     def __init__(self, stringNo):
-
-        # generate a random number 0-5 to pick a string for the obstacle to spawn
-        # num = random.randint(0, 5)
-        #
 
         num = int(stringNo)
 
@@ -23,6 +21,8 @@ class Obstacle:
         if num == 0:
             self._rect = pygame.Rect((300, 165, 15, 15))
 
+        self._color = (255, 255, 255)
+
     @property
     def rect(self):
         return self._rect
@@ -30,3 +30,11 @@ class Obstacle:
     @rect.setter
     def rect(self, rect):
         self._rect = rect
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, color):
+        self._color = color
