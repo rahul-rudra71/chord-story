@@ -19,12 +19,9 @@ display = pygame.Surface(
     (300, 200)
 )  # used as the surface for rendering, which is scaled
 
+# initialize game and player
 game = Game()
 player = Player()
-
-obstacles = []
-powerups = []
-
 
 # opens the main menu screen
 def main_menu():
@@ -195,10 +192,10 @@ def paused():
         if quit_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, quit_button)
             if click:
-                player.player_lives = 3
+                player.lives = 3
                 player.score = 0
-                obstacles.clear()
-                powerups.clear()
+                game.obstacles.clear()
+                game.powerups.clear()
                 game.state = "running"
                 main_menu()
 
@@ -247,20 +244,20 @@ def restarting():
         if restart_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight1, restart_button)
             if click:
-                player.player_lives = 3
+                player.lives = 3
                 player.score = 0
                 game.state = "running"
-                obstacles.clear()
-                powerups.clear()
+                game.obstacles.clear()
+                game.powerups.clear()
                 return
         if quit_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight2, quit_button)
             if click:
-                player.player_lives = 3
+                player.lives = 3
                 player.score = 0
                 game.state = "running"
-                obstacles.clear()
-                powerups.clear()
+                game.obstacles.clear()
+                game.powerups.clear()
                 main_menu()
 
         button_font = pygame.font.Font("freesansbold.ttf", 17)
@@ -319,22 +316,28 @@ def obstacle_collision(player_rect, obstacles):
     # if collision, decrement lives
     for obstacle in obstacles:
         if player_rect.colliderect(obstacle):
-            player.player_lives = player.player_lives - 1
+            player.lives = player.lives - 1
             obstacles.remove(obstacle)
         if obstacle.rect.left < -15:
             obstacles.remove(obstacle)
-        if player.player_lives == 0:
+        if player.lives == 0:
             game.state = "dead"
 
 
 def powerup_collision(player_rect, powerups):
-    for powerup in powerups:
-        if player_rect.colliderect(powerup):
-            if powerup.type == "life":
-                player.player_lives += 1
-            powerups.remove(powerup)
-        if powerup.rect.left < -15:
-            powerups.remove(powerup)
+
+    if player.powerup != "phaser":
+        for powerup in powerups:
+            if player_rect.colliderect(powerup):
+                if powerup.type == "life":
+                    player.lives += 1
+                if powerup.type == "phaser":
+                    player.powerup = "phaser"
+                    # TODO: change player sprite for phasing powerup
+                    pygame.time.set_timer(game.events["PHASERTIMER"], 5000)
+                powerups.remove(powerup)
+            if powerup.rect.left < -15:
+                powerups.remove(powerup)
 
 
 # display the game over screen
@@ -362,7 +365,7 @@ def update_lives():
     pygame.draw.rect(screen, (255, 255, 255), lives_display)
 
     lives_font = pygame.font.Font("freesansbold.ttf", 12)
-    player_lives_str = str(player.player_lives)
+    player_lives_str = str(player.lives)
     lives_text = lives_font.render("LIVES: " + player_lives_str, True, (0, 0, 0))
     screen.blit(lives_text, (22, 375))
 
@@ -408,8 +411,8 @@ def run_game():
     vertical_momentum = 0
     air_timer = 0
 
-    obstacles.clear()
-    powerups.clear()
+    game.obstacles.clear()
+    game.powerups.clear()
 
     decode = dn.decode(game.difficulty)
 
@@ -420,19 +423,15 @@ def run_game():
     noteTime = noteKeys[0]
     stringNo = notes[noteTime]
 
-    NEWOBSTACLE = USEREVENT + 1
-    pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
-
-    SCOREUP = USEREVENT + 2
-    pygame.time.set_timer(SCOREUP, 1000)
-
-    SPAWNLIFE = USEREVENT + 3
-    pygame.time.set_timer(SPAWNLIFE, 6000)
+    pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000))
+    pygame.time.set_timer(game.events["SCOREUP"], 1000)
+    pygame.time.set_timer(game.events["SPAWNLIFE"], 6000)
+    pygame.time.set_timer(game.events["SPAWNPHASER"], 10000)
 
     keyIndex = 0
     mixer.music.play()
 
-    player.player_img.set_colorkey((255, 255, 255))
+    player.img.set_colorkey((255, 255, 255))
 
     background_rect = game.background.get_rect()
 
@@ -452,12 +451,12 @@ def run_game():
         tile_rects = draw_strings()
 
         # move obstacles across screen
-        for obstacle in obstacles:
+        for obstacle in game.obstacles:
             if game.state == "running":
                 obstacle.rect.x -= 2
             pygame.draw.rect(display, (255, 255, 255), obstacle.rect)
 
-        for powerup in powerups:
+        for powerup in game.powerups:
             if game.state == "running":
                 powerup.rect.x -= 2
             pygame.draw.rect(display, powerup.color, powerup.rect)
@@ -476,14 +475,12 @@ def run_game():
                 vertical_momentum = 3
 
         # check for collisions and grounding
-        player.player_rect, collisions = move(
-            player.player_rect, player_movement, tile_rects
-        )
+        player.rect, collisions = move(player.rect, player_movement, tile_rects)
 
         # death if collision with obstacle
-        obstacle_collision(player.player_rect, obstacles)
+        obstacle_collision(player.rect, game.obstacles)
 
-        powerup_collision(player.player_rect, powerups)
+        powerup_collision(player.rect, game.powerups)
 
         for event in pygame.event.get():  # event loop
 
@@ -510,9 +507,9 @@ def run_game():
                 if event.key == K_DOWN:
                     if air_timer < 6:
                         vertical_momentum = 3
-                    player.player_rect.y += 12
-                    if player.player_rect.y > 166:
-                        player.player_rect.y = 166
+                    player.rect.y += 12
+                    if player.rect.y > 166:
+                        player.rect.y = 166
 
             # stop moving on release
             if event.type == KEYUP and game.state == "running":
@@ -522,9 +519,9 @@ def run_game():
                     moving_left = False
 
             # spawn a new obstacle
-            if event.type == NEWOBSTACLE and game.state == "running":
+            if event.type == game.events["NEWOBSTACLE"] and game.state == "running":
                 obstacle = Obstacle(stringNo)
-                obstacles.append(obstacle)
+                game.obstacles.append(obstacle)
 
                 keyIndex = keyIndex + 1
 
@@ -538,18 +535,30 @@ def run_game():
                 stringNo = notes[noteTime]
 
                 # set the timer to spawn the next obstacle
-                pygame.time.set_timer(NEWOBSTACLE, int(noteDiffTime * 1000))
+                pygame.time.set_timer(
+                    game.events["NEWOBSTACLE"], int(noteDiffTime * 1000)
+                )
 
             # increase the score every second; higher difficulty = greater increment
-            if event.type == SCOREUP and game.state == "running":
+            if event.type == game.events["SCOREUP"] and game.state == "running":
                 player.score += (1 - game.difficulty) * 20
 
             # spawn a life every minute
-            if event.type == SPAWNLIFE and game.state == "running":
+            if event.type == game.events["SPAWNLIFE"] and game.state == "running":
                 life = Powerup("life", (0, 128, 0))
-                powerups.append(life)
+                game.powerups.append(life)
 
-        display.blit(player.player_img, (player.player_rect.x, player.player_rect.y))
+            # spawn a phaser powerup
+            if event.type == game.events["SPAWNPHASER"] and game.state == "running":
+                phaser = Powerup("phaser", (0, 255, 255))
+                game.powerups.append(phaser)
+
+            # phaser powerup lasts for 5s
+            if event.type == game.events["PHASERTIMER"] and player.powerup == "phaser":
+                player.powerup == None
+                # TODO: change player sprite back to normal
+
+        display.blit(player.img, (player.rect.x, player.rect.y))
 
         screen.blit(pygame.transform.scale(display, WINDOW_SIZE), (0, 0))
 
@@ -566,7 +575,7 @@ def run_game():
             noteTime = noteKeys[0]
             stringNo = notes[noteTime]
 
-            pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
+            pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000))
 
             keyIndex = 0
             mixer.music.play()
@@ -580,7 +589,7 @@ def run_game():
             noteTime = noteKeys[0]
             stringNo = notes[noteTime]
 
-            pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
+            pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000))
 
             keyIndex = 0
             mixer.music.play()

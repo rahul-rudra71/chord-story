@@ -6,6 +6,15 @@ class Game:
         self._background = pygame.image.load("assets/background.png")
         self._difficulty = 0.25
         self._state = "running"
+        self._obstacles = []
+        self._powerups = []
+        self._events = {
+            "NEWOBSTACLE": USEREVENT + 1,
+            "SCOREUP": USEREVENT + 1,
+            "SPAWNLIFE": USEREVENT + 3,
+            "SPAWNPHASER": USEREVENT + 4,
+            "PHASERTIMER": USEREVENT + 5,
+        }
 
     @property
     def background(self):
@@ -26,3 +35,23 @@ class Game:
     @state.setter
     def state(self, state):
         self._state = state
+
+    @property
+    def obstacles(self):
+        return self._obstacles
+
+    @obstacles.setter
+    def obstacles(self, obstacles):
+        self._obstacles = obstacles
+
+    @property
+    def powerups(self):
+        return self._powerups
+
+    @powerups.setter
+    def powerups(self, powerups):
+        self._powerups = powerups
+
+    @property
+    def events(self):
+        return self._events

@@ -3,34 +3,35 @@ import pygame
 
 class Player:
     def __init__(self):
-        self._player_rect = pygame.Rect(100, 100, 5, 13)
-        self._player_lives = 3
-        self._player_img = pygame.image.load("assets/player.png").convert()
+        self._rect = pygame.Rect(100, 100, 5, 13)
+        self._lives = 3
+        self._img = pygame.image.load("assets/player.png").convert()
         self._score = 0
+        self._powerup = None
 
     @property
-    def player_rect(self):
-        return self._player_rect
+    def rect(self):
+        return self._rect
 
-    @player_rect.setter
-    def player_rect(self, player_rect):
-        self._player_rect = player_rect
-
-    @property
-    def player_lives(self):
-        return self._player_lives
-
-    @player_lives.setter
-    def player_lives(self, player_lives):
-        self._player_lives = player_lives
+    @rect.setter
+    def rect(self, rect):
+        self._rect = rect
 
     @property
-    def player_img(self):
-        return self._player_img
+    def lives(self):
+        return self._lives
 
-    @player_img.setter
-    def player_img(self, player_img):
-        self._player_img = player_img
+    @lives.setter
+    def lives(self, lives):
+        self._lives = lives
+
+    @property
+    def img(self):
+        return self._img
+
+    @img.setter
+    def img(self, img):
+        self._img = img
 
     @property
     def score(self):
@@ -39,3 +40,11 @@ class Player:
     @score.setter
     def score(self, score):
         self._score = score
+
+    @property
+    def powerup(self):
+        return self._powerup
+
+    @powerup.setter
+    def powerup(self, powerup):
+        self._powerup = powerup
