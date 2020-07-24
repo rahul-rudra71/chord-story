@@ -22,7 +22,7 @@ Github: https://github.com/michaelarobertsjr/chord-story.git
    * Harder difficulties having more frequent note generation
 4. Select the audio file you would like to use for this level
    * .wav or .mp3 files
-   * We have included a folder of possible files, but the application should run with any '.wav' file. 
+   * We have included a folder of possible files under folder "music", but the application should run with any '.wav' file. 
 5. The level will begin
    * Move the player object between and along the six rendered strings to avoid the incoming notes. 
    * If you lose 3 lives (by running into 3 of the obstacles generated) you will receive a game over message and be given the option to either restart the level or quit to main menu. The same options are given if you complete the level without losing 3 lives, winning the game.
@@ -31,6 +31,11 @@ Github: https://github.com/michaelarobertsjr/chord-story.git
 * Up/Down Arrow Keys --> move vertically between strings
 * Left/Right Arrow Keys --> move horizontally along the current string
 * p Key --> pause the game
+
+## Other Game Features
+* Powerups:
+  * Extra Life: Grants the player +1 life
+  * Invincibility: Grants the player the ability to phase through obstacles 
 
 ## Known Glitches
 * Sometimes when the player restarts the game, the player object will move to the right side of the screen. This is resolved by hitting the right arrow key to regain control.
