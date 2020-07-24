@@ -10,7 +10,7 @@ class Game:
         self._powerups = []
         self._events = {
             "NEWOBSTACLE": USEREVENT + 1,
-            "SCOREUP": USEREVENT + 1,
+            "SCOREUP": USEREVENT + 2,
             "SPAWNLIFE": USEREVENT + 3,
             "SPAWNPHASER": USEREVENT + 4,
             "PHASERTIMER": USEREVENT + 5,
