@@ -413,35 +413,44 @@ def draw_strings():
 def run_game():
     game.state = "running"
 
+    # initialize movement
     moving_right = False
     moving_left = False
     vertical_momentum = 0
     air_timer = 0
 
+    # clear the board
     game.obstacles.clear()
     game.powerups.clear()
 
+    # process the audio file
     decode = dn.decode(game.difficulty)
 
+    # if mp3 selected, convert to a temporary wav for pygame mixer compatibility
     if decode[1].endswith(".mp3"):
         sound = AudioSegment.from_mp3(decode[1])
         sound.export(decode[1][:-4] + ".wav", format="wav")
 
+    # load the notes and music
     notes = decode[0]
     mixer.music.load(decode[1][:-4] + ".wav")
     noteKeys = list(notes.keys())
 
+    # deleted the temporary wav file
     if decode[1].endswith(".mp3"):
         os.remove(decode[1][:-4] + ".wav")
 
+    # get the first note/obstacle
     noteTime = noteKeys[0]
     stringNo = notes[noteTime]
 
+    # start the timers for game events and spawning
     pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
     pygame.time.set_timer(game.events["SCOREUP"], 1000)
     pygame.time.set_timer(game.events["SPAWNLIFE"], 6000, True)
     pygame.time.set_timer(game.events["SPAWNPHASER"], 10000, True)
 
+    # start the music
     keyIndex = 0
     mixer.music.play()
 
@@ -462,9 +471,10 @@ def run_game():
         if background_rect.right == 0:
             background_rect.x = 0
 
+        # draw the guitar strings to screen
         tile_rects = draw_strings()
 
-        # move obstacles across screen
+        # move obstacles and other objects across screen
         for obstacle in game.obstacles:
             if game.state == "running":
                 obstacle.rect.x -= 2
@@ -489,8 +499,7 @@ def run_game():
                 vertical_momentum = 3
 
         # check for collisions and grounding
-        player.rect, collisions = move(
-            player.rect, player_movement, tile_rects)
+        player.rect, collisions = move(player.rect, player_movement, tile_rects)
 
         # death if collision with obstacle
         # player passes through and ignores obstacles if possessing phaser ability
@@ -542,6 +551,7 @@ def run_game():
 
                     keyIndex = keyIndex + 1
 
+                    # if end of song, win
                     if keyIndex > len(noteKeys) - 1:
                         game.state = "won"
                         break
