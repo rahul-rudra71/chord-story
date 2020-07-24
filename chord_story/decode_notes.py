@@ -8,8 +8,9 @@ from tkinter import *
 def detect_pitch(magnitudes, pitches, t):
     index = magnitudes[:, t].argmax()
     pitch = pitches[index, t]
-
-    return pitch
+    while(math.isclose(pitches[index, t], pitches[index, t+1], abs_tol=10**1)):
+      t += 1
+    return pitch, t
 
 
 def trim_onsets(onsets, times, offset):
@@ -120,8 +121,10 @@ def decode(note_offset):
     x = 0
     previous = ''
     keyout = {}
+    timeout = {}
     while x < len(trimmed_onset):
-        pitch_start = detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[x])
+        pitch_start, time_end = detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[x])
+        timeout[trimmed_times[x]] = round(librosa.frames_to_time(time_end, sr=sample), 2)
 
         if pitch_start != 0.0:
             note = librosa.core.hz_to_note(pitch_start)
@@ -148,4 +151,4 @@ def decode(note_offset):
 
         x = x + 1
     # Output dictionary of times and string assignments
-    return [keyout, filename]
+    return [keyout, filename, timeout]

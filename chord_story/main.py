@@ -380,10 +380,14 @@ def run_game():
 
     notes = decode[0]
     mixer.music.load(decode[1])
+    times = decode[2]
     noteKeys = list(notes.keys())
+    timeKeys = list(times.keys())
 
     noteTime = noteKeys[0]
+    timeTime = timeKeys[0]
     stringNo = notes[noteTime]
+    stringTi = times[timeTime]
 
     NEWOBSTACLE = USEREVENT + 1
     pygame.time.set_timer(NEWOBSTACLE, int(noteTime * 1000))
@@ -469,7 +473,8 @@ def run_game():
                 if event.key == K_LEFT:
                     moving_left = False
             if event.type == NEWOBSTACLE and not won:
-                obstacle = Obstacle(stringNo)
+                stringTi = stringTi - timeTime
+                obstacle = Obstacle(stringNo, note_length)
                 obstacles.append(obstacle)
 
                 keyIndex = keyIndex + 1

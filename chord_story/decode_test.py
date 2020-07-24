@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
 import random
+import math
 from tkinter import filedialog
 from tkinter import *
 
@@ -8,8 +9,9 @@ from tkinter import *
 def detect_pitch(magnitudes, pitches, t):
     index = magnitudes[:, t].argmax()
     pitch = pitches[index, t]
-
-    return pitch
+    while(math.isclose(pitches[index, t], pitches[index, t+1], abs_tol=10**1)):
+      t += 1
+    return pitch, t
 
 
 def trim_onsets(onsets, times, offset):
@@ -105,7 +107,6 @@ def decode(note_offset):
     # root.destroy()
     filename = input("file: ")
     clip, sample = librosa.load(filename)
-
     onset_frames = librosa.onset.onset_detect(y=clip, sr=sample)
     # Get frequency levels against frame values
     ps, mags = librosa.core.piptrack(y=clip, sr=sample)
@@ -120,45 +121,45 @@ def decode(note_offset):
     x = 0
     previous = ''
     keyout = {}
-    #return detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[0])
-    return ps
-    # while x < len(trimmed_onset):
-    #     pitch_start = detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[x])
-    #
-    #     if pitch_start != 0.0:
-    #         note = librosa.core.hz_to_note(pitch_start)
-    #     # The string numbers correspond to the strings in
-    #     # Obstacle.py.  Iterate through the output dictionary
-    #     # to obtain obstacle string placements and times
-    #
-    #     temp_assign = assign_string(note, previous)
-    #     if temp_assign == 'low':
-    #         # Note must be below range, change to 2 to be assigned
-    #         note = note[:-1] + '2'
-    #         temp_assign = assign_string(note, previous)
-    #     elif temp_assign == '':
-    #         # Note must be somewhere from C2 - D#2, change to 3 to be assigned
-    #         note = note[:-1] + '3'
-    #         temp_assign = assign_string(note, previous)
-    #     elif temp_assign == 'high':
-    #         # Note must be above range, change to 5 to be assigned
-    #         note = note[:-1] + '5'
-    #         temp_assign = assign_string(note, previous)
-    #
-    #     keyout[trimmed_times[x]] = temp_assign
-    #     previous = temp_assign
-    #
-    #     x = x + 1
-    # # Output dictionary of times and string assignments
-    # return [keyout, filename]
+    timeout = {}
+    while x < len(trimmed_onset):
+        pitch_start, time_length = detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[x])
+        timeout[trimmed_times[x]] = round(librosa.frames_to_time(time_length, sr=sample), 2)
+        if pitch_start != 0.0:
+            note = librosa.core.hz_to_note(pitch_start)
+        # The string numbers correspond to the strings in
+        # Obstacle.py.  Iterate through the output dictionary
+        # to obtain obstacle string placements and times
+
+        temp_assign = assign_string(note, previous)
+        if temp_assign == 'low':
+            # Note must be below range, change to 2 to be assigned
+            note = note[:-1] + '2'
+            temp_assign = assign_string(note, previous)
+        elif temp_assign == '':
+            # Note must be somewhere from C2 - D#2, change to 3 to be assigned
+            note = note[:-1] + '3'
+            temp_assign = assign_string(note, previous)
+        elif temp_assign == 'high':
+            # Note must be above range, change to 5 to be assigned
+            note = note[:-1] + '5'
+            temp_assign = assign_string(note, previous)
+
+        keyout[trimmed_times[x]] = temp_assign
+        previous = temp_assign
+
+        x = x + 1
+    # Output dictionary of times and string assignments
+    return [keyout, filename, timeout]
 
 def main():
   np.set_printoptions(precision=3)
   n = decode(0.25)
-  for x in n:
-    for y in x:
-      if (y!=0):
-        print(y)
+  #mags first axis is magnitude, second axis is t.
+  #sample rate is 22050
+  print(n)
+
+
 
 if __name__ == "__main__":
   main()
