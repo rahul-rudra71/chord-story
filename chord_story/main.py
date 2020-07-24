@@ -1,6 +1,7 @@
 import pygame
 import sys
 import chord_story.decode_notes as dn
+from pydub import AudioSegment
 from pygame.locals import *
 from pygame import mixer
 from chord_story.Game import Game
@@ -422,9 +423,16 @@ def run_game():
 
     decode = dn.decode(game.difficulty)
 
+    if decode[1].endswith(".mp3"):
+        sound = AudioSegment.from_mp3(decode[1])
+        sound.export(decode[1][:-4] + ".wav", format="wav")
+
     notes = decode[0]
-    mixer.music.load(decode[1])
+    mixer.music.load(decode[1][:-4] + ".wav")
     noteKeys = list(notes.keys())
+
+    if decode[1].endswith(".mp3"):
+        os.remove(decode[1][:-4] + ".wav")
 
     noteTime = noteKeys[0]
     stringNo = notes[noteTime]
