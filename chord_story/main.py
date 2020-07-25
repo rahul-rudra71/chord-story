@@ -1,5 +1,5 @@
 import pygame
-import sys
+import sys, os
 import chord_story.decode_notes as dn
 from pydub import AudioSegment
 from pygame.locals import *
