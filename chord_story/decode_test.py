@@ -9,6 +9,7 @@ from tkinter import *
 def detect_pitch(magnitudes, pitches, t):
     index = magnitudes[:, t].argmax()
     pitch = pitches[index, t]
+    print(pitch)
     while(math.isclose(pitches[index, t], pitches[index, t+1], abs_tol=10**1)):
       t += 1
     return pitch, t
@@ -110,7 +111,6 @@ def decode(note_offset):
     onset_frames = librosa.onset.onset_detect(y=clip, sr=sample)
     # Get frequency levels against frame values
     ps, mags = librosa.core.piptrack(y=clip, sr=sample)
-
     # Get time values against onsets
     timestamps = librosa.frames_to_time(onset_frames, sr=sample)
 
