@@ -1,7 +1,7 @@
 import sys, os, random
 import pygame
 from pygame.locals import *
-#from pygame import mixer
+from pygame import mixer
 from pydub import AudioSegment
 
 import chord_story.decode_notes as dn
@@ -13,7 +13,7 @@ from chord_story.Player import Player
 # initialize display
 clock = pygame.time.Clock()
 pygame.init()
-#mixer.init()
+mixer.init()
 pygame.display.set_caption("Chord Story")
 WINDOW_SIZE = (600, 400)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
@@ -171,7 +171,7 @@ def countdown(seconds):
 def paused():
     click = False
 
-    #pygame.mixer.music.pause()
+    pygame.mixer.music.pause()
 
     while game.state == "paused":
         mousex, mousey = pygame.mouse.get_pos()
@@ -236,7 +236,7 @@ def paused():
 # unpause the game
 def unpause():
     game.state = "running"
-    #pygame.mixer.music.unpause()
+    pygame.mixer.music.unpause()
 
 
 # open the restart screen
@@ -333,8 +333,8 @@ def obstacle_collision(player_rect, obstacles):
     # if collision, decrement lives
     for obstacle in obstacles:
         if player_rect.colliderect(obstacle):
-            #effect = pygame.mixer.Sound('assets/sounds/damage.wav')
-            #effect.play()
+            effect = pygame.mixer.Sound('assets/sounds/damage.wav')
+            effect.play()
             # TODO: change the player to a damage avatar momentarily (if possible, make flashing animation)
             # player loses a life; obstacle hit disappears and the player gets 2s of recovery time
             player.lives = player.lives - 1
@@ -352,8 +352,8 @@ def powerup_collision(player_rect, powerups):
     for powerup in powerups:
         if player_rect.colliderect(powerup):
             if powerup.type == "life":
-                #effect = pygame.mixer.Sound('assets/sounds/life.wav')
-                #effect.play()
+                effect = pygame.mixer.Sound('assets/sounds/life.wav')
+                effect.play()
                 player.lives += 1
             if powerup.type == "phaser":
                 player.powerup = "phaser"
@@ -384,7 +384,7 @@ def set_obstacle_color(obstacle):
 
 # display the game over screen
 def game_over():
-    #mixer.music.stop()
+    mixer.music.stop()
     font = pygame.font.Font("freesansbold.ttf", 80)
     text = font.render("GAME OVER", True, (255, 0, 0))
     text_rect = text.get_rect(
@@ -399,7 +399,7 @@ def game_won():
     text_rect = text.get_rect(
         center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
-    #mixer.music.stop()
+    mixer.music.stop()
 
 
 # update the lives displayed on screen
@@ -465,29 +465,29 @@ def draw_background(background_rect):
     return background_rect
 
 
-# # draw obstacles and powerups
-# def draw_game_objects():
-#     for obstacle in game.obstacles:
-#         if game.state == "running":
+# draw obstacles and powerups
+def draw_game_objects():
+    for obstacle in game.obstacles:
+        if game.state == "running":
 
-#             # faster obstacle moving speed for higher difficulty
-#             if game.difficulty == 0.5: # easy mode
-#                 obstacle.rect.x -= 2
-#             if game.difficulty == 0.35: # medium mode
-#                 obstacle.rect.x -= 3
-#             if game.difficulty == 0.25: # hard mode
-#                 obstacle.rect.x -= 4
+            # faster obstacle moving speed for higher difficulty
+            if game.difficulty == 0.5: # easy mode
+                obstacle.rect.x -= 2
+            if game.difficulty == 0.35: # medium mode
+                obstacle.rect.x -= 3
+            if game.difficulty == 0.25: # hard mode
+                obstacle.rect.x -= 4
 
-#             # change color of obstacle after crossing bar
-#             # if obstacle.rect.x < 350:
-#             #     set_obstacle_color(obstacle)
+            # change color of obstacle after crossing bar
+            if obstacle.rect.x < 350:
+                set_obstacle_color(obstacle)
                 
-#         pygame.draw.rect(display, obstacle.color, obstacle.rect)
+        pygame.draw.rect(display, obstacle.color, obstacle.rect)
 
-#     for powerup in game.powerups:
-#         if game.state == "running":
-#             powerup.rect.x -= 2
-#         pygame.draw.rect(display, powerup.color, powerup.rect)
+    for powerup in game.powerups:
+        if game.state == "running":
+            powerup.rect.x -= 2
+        pygame.draw.rect(display, powerup.color, powerup.rect)
 
 # main game function with loop
 def run_game():
@@ -514,7 +514,7 @@ def run_game():
     # load the notes and music
     notes = decode[0]
     print(notes)
-    #mixer.music.load(decode[1][:-4] + ".wav")
+    mixer.music.load(decode[1][:-4] + ".wav")
     noteKeys = list(notes.keys())
 
     # deleted the temporary wav file
@@ -535,9 +535,9 @@ def run_game():
 
     keyIndex = 0
     # TODO: time the delay so the obstacles line up with the bar on the beat for each mode
-    # mixer.music.play()
-    # if game.difficulty == 0.5: # easy mode
-    #     pygame.time.set_timer(game.events["STARTMUSIC"], 1500, True)
+    #mixer.music.play()
+    if game.difficulty == 0.5: # easy mode
+        pygame.time.set_timer(game.events["STARTMUSIC"], 500, True)
     # if game.difficulty == 0.35: # easy mode
     #     pygame.time.set_timer(game.events["STARTMUSIC"], 1500, True)
     # if game.difficulty == 0.25: # easy mode
@@ -558,29 +558,7 @@ def run_game():
         tile_rects = draw_strings()
 
         # move obstacles and other objects across screen
-        #draw_game_objects()
-        # draw obstacles and powerups
-        for obstacle in game.obstacles:
-            if game.state == "running":
-
-                # faster obstacle moving speed for higher difficulty
-                if game.difficulty == 0.5: # easy mode
-                    obstacle.rect.x -= 2
-                if game.difficulty == 0.35: # medium mode
-                    obstacle.rect.x -= 3
-                if game.difficulty == 0.25: # hard mode
-                    obstacle.rect.x -= 4
-
-                # change color of obstacle after crossing bar
-                # if obstacle.rect.x < 350:
-                #     set_obstacle_color(obstacle)
-                    
-            pygame.draw.rect(display, obstacle.color, obstacle.rect)
-
-        for powerup in game.powerups:
-            if game.state == "running":
-                powerup.rect.x -= 2
-            pygame.draw.rect(display, powerup.color, powerup.rect)
+        draw_game_objects()
 
         player_movement = [0, 0]
 
@@ -702,8 +680,8 @@ def run_game():
                     player.img.set_colorkey((255, 255, 255))
 
                 # start the music with a delay so the obstacles line up with the bar
-                #if event.type == game.events["STARTMUSIC"]:
-                    #mixer.music.play()
+                if event.type == game.events["STARTMUSIC"]:
+                    mixer.music.play()
 
                 # players gets 2s of recover time after losing a life or unpausing the game
                 if event.type == game.events["RECOVER"]:
@@ -733,14 +711,13 @@ def run_game():
             pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
 
             keyIndex = 0
-            #mixer.music.play()
+            mixer.music.play()
 
         # win - show game win screen; start new level or quit
         if game.state == "won":
             game_won()
             game.state = "restarting"
             restarting()
-            # game.state == "running"
             game.obstacles.clear()
             game.powerups.clear()
 
