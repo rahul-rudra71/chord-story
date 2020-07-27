@@ -1,9 +1,10 @@
+import sys, os, random
 import pygame
-import sys, os
-import chord_story.decode_notes as dn
-from pydub import AudioSegment
 from pygame.locals import *
-from pygame import mixer
+#from pygame import mixer
+from pydub import AudioSegment
+
+import chord_story.decode_notes as dn
 from chord_story.Game import Game
 from chord_story.Obstacle import Obstacle
 from chord_story.Powerup import Powerup
@@ -12,12 +13,13 @@ from chord_story.Player import Player
 # initialize display
 clock = pygame.time.Clock()
 pygame.init()
-mixer.init()
+#mixer.init()
 pygame.display.set_caption("Chord Story")
 WINDOW_SIZE = (600, 400)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
 # used as the surface for rendering, which is scaled
 display = pygame.Surface((300, 200))
+# TODO: create a second surface for the obstacle lineup bar so we can set the alpha level
 
 # initialize game and player
 game = Game()
@@ -32,7 +34,7 @@ def main_menu():
     while menu_open:
 
         display.fill((255, 255, 255))  # clear screen by filling it with white
-        chord = pygame.image.load("assets/mainmenu.png")
+        chord = pygame.image.load("assets/images/mainmenu.png")
         screen.blit(chord, (0, 0))
 
         mousex, mousey = pygame.mouse.get_pos()
@@ -57,6 +59,8 @@ def main_menu():
             "CLASSIC MODE", True, (255, 255, 255))
         screen.blit(classic_text, (59, 72))
 
+        # TODO: add a game instruction page with controls and other info
+
         click = False
 
         for event in pygame.event.get():  # event loop
@@ -80,7 +84,7 @@ def select_difficulty():
     while select:
         display.fill((224, 132, 132))  # clear screen by filling it with pink
 
-        pinkbackground = pygame.image.load("assets/pink.png")
+        pinkbackground = pygame.image.load("assets/images/pink.png")
 
         screen.blit(pinkbackground, (0, 0))
 
@@ -95,8 +99,7 @@ def select_difficulty():
         mousex, mousey = pygame.mouse.get_pos()
 
         easy_button = pygame.Rect(screen.get_width() / 2 - 72.5, 100, 145, 60)
-        medium_button = pygame.Rect(
-            screen.get_width() / 2 - 72.5, 200, 145, 60)
+        medium_button = pygame.Rect(screen.get_width() / 2 - 72.5, 200, 145, 60)
         hard_button = pygame.Rect(screen.get_width() / 2 - 72.5, 300, 145, 60)
 
         # render buttons
@@ -156,15 +159,22 @@ def select_difficulty():
         clock.tick(60)
 
 
+# display the countdown timer
+def countdown(seconds):
+    font = pygame.font.Font("freesansbold.ttf", 80)
+    text = font.render(str(seconds), True, (255, 255, 255))
+    text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+    screen.blit(text, text_rect)
+
+
 # open the pause screen
 def paused():
     click = False
-    # pause_screen = True
+
+    #pygame.mixer.music.pause()
+
     while game.state == "paused":
-
         mousex, mousey = pygame.mouse.get_pos()
-
-        pygame.mixer.music.pause()
 
         # create the buttons used to get back into the game or quit
         continue_button = pygame.Rect(470, 340, 95, 50)
@@ -188,8 +198,9 @@ def paused():
         if continue_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, continue_button)
             if click:
-                game.state = "running"
-                pygame.mixer.music.unpause()
+                game.counter = 3
+                pygame.time.set_timer(game.events["COUNTDOWN"], 1000)
+                game.state = "resuming"
                 return
         if quit_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, quit_button)
@@ -211,7 +222,6 @@ def paused():
 
         for event in pygame.event.get():  # event loop
             if event.type == QUIT:
-                # pause_screen = False
                 game.state = "exit"
                 pygame.quit()
                 sys.exit()
@@ -221,6 +231,12 @@ def paused():
 
         pygame.display.update()
         clock.tick(60)
+
+
+# unpause the game
+def unpause():
+    game.state = "running"
+    #pygame.mixer.music.unpause()
 
 
 # open the restart screen
@@ -317,12 +333,18 @@ def obstacle_collision(player_rect, obstacles):
     # if collision, decrement lives
     for obstacle in obstacles:
         if player_rect.colliderect(obstacle):
-            # TODO: add damage sound effect
+            #effect = pygame.mixer.Sound('assets/sounds/damage.wav')
+            #effect.play()
+            # TODO: change the player to a damage avatar momentarily (if possible, make flashing animation)
+            # player loses a life; obstacle hit disappears and the player gets 2s of recovery time
             player.lives = player.lives - 1
             obstacles.remove(obstacle)
+            player.powerup = "phaser"
+            pygame.time.set_timer(game.events["RECOVER"], 2000, True)
         if obstacle.rect.left < -15:
             obstacles.remove(obstacle)
         if player.lives == 0:
+            # TODO: add dead sound effect
             game.state = "dead"
 
 
@@ -330,23 +352,39 @@ def powerup_collision(player_rect, powerups):
     for powerup in powerups:
         if player_rect.colliderect(powerup):
             if powerup.type == "life":
-                # TODO: add 1up sound effect
+                #effect = pygame.mixer.Sound('assets/sounds/life.wav')
+                #effect.play()
                 player.lives += 1
             if powerup.type == "phaser":
                 player.powerup = "phaser"
                 # TODO: add powerup sound effect
-                player.img = pygame.image.load("assets/player_invincible.png").convert_alpha()
-                # player.img.set_colorkey((255, 255, 255))
+                player.img = pygame.image.load("assets/images/player_invincible.png").convert_alpha()
                 pygame.time.set_timer(game.events["PHASERTIMER"], 5000, True)
             powerups.remove(powerup)
         if powerup.rect.left < -15:
             powerups.remove(powerup)
 
 
+# set the color of the obstacle once it crossing the beat bar
+def set_obstacle_color(obstacle):
+    # color depends on string
+    if obstacle.stringNum == 0:
+        obstacle.color = (255, 84, 71)
+    if obstacle.stringNum == 1:
+        obstacle.color = (255, 181, 71)
+    if obstacle.stringNum == 2:
+        obstacle.color = (255, 246, 117)
+    if obstacle.stringNum == 3:
+        obstacle.color = (108, 224, 110)
+    if obstacle.stringNum == 4:
+        obstacle.color = (142, 185, 245)
+    if obstacle.stringNum == 5:
+        obstacle.color = (191, 107, 219)
+
+
 # display the game over screen
 def game_over():
-    mixer.music.stop()
-    # TODO: add dead sound effect
+    #mixer.music.stop()
     font = pygame.font.Font("freesansbold.ttf", 80)
     text = font.render("GAME OVER", True, (255, 0, 0))
     text_rect = text.get_rect(
@@ -361,7 +399,7 @@ def game_won():
     text_rect = text.get_rect(
         center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
-    mixer.music.stop()
+    #mixer.music.stop()
 
 
 # update the lives displayed on screen
@@ -389,6 +427,7 @@ def update_score():
     screen.blit(score_text, (82, 375))
 
 
+# draw the guitar strings on the screen
 def draw_strings():
     tile_rects = []
 
@@ -406,8 +445,49 @@ def draw_strings():
     pygame.draw.line(display, (255, 255, 255), (0, 179), (400, 179), 2)  # line 5
     tile_rects.append(pygame.Rect(0, 179, 400, 2))
 
+    # draw the obstacle bar
+    #pygame.draw.line(display, (255, 255, 255), (350, 0), (350, 200), 5)
+
     return tile_rects
 
+
+# display and scroll the background image
+def draw_background(background_rect):
+    display.blit(game.background, background_rect)  # left image
+    display.blit(
+        game.background, background_rect.move(background_rect.width, 0)
+    )  # right image
+    if game.state == "running":
+        background_rect.move_ip(-1, 0)
+    if background_rect.right == 0:
+        background_rect.x = 0
+
+    return background_rect
+
+
+# # draw obstacles and powerups
+# def draw_game_objects():
+#     for obstacle in game.obstacles:
+#         if game.state == "running":
+
+#             # faster obstacle moving speed for higher difficulty
+#             if game.difficulty == 0.5: # easy mode
+#                 obstacle.rect.x -= 2
+#             if game.difficulty == 0.35: # medium mode
+#                 obstacle.rect.x -= 3
+#             if game.difficulty == 0.25: # hard mode
+#                 obstacle.rect.x -= 4
+
+#             # change color of obstacle after crossing bar
+#             # if obstacle.rect.x < 350:
+#             #     set_obstacle_color(obstacle)
+                
+#         pygame.draw.rect(display, obstacle.color, obstacle.rect)
+
+#     for powerup in game.powerups:
+#         if game.state == "running":
+#             powerup.rect.x -= 2
+#         pygame.draw.rect(display, powerup.color, powerup.rect)
 
 # main game function with loop
 def run_game():
@@ -433,7 +513,8 @@ def run_game():
 
     # load the notes and music
     notes = decode[0]
-    mixer.music.load(decode[1][:-4] + ".wav")
+    print(notes)
+    #mixer.music.load(decode[1][:-4] + ".wav")
     noteKeys = list(notes.keys())
 
     # deleted the temporary wav file
@@ -446,13 +527,22 @@ def run_game():
 
     # start the timers for game events and spawning
     pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
-    pygame.time.set_timer(game.events["SCOREUP"], 1000)
-    pygame.time.set_timer(game.events["SPAWNLIFE"], 6000, True)
-    pygame.time.set_timer(game.events["SPAWNPHASER"], 10000, True)
+    pygame.time.set_timer(game.events["SCOREUP"], 1000) # update the score every second
+    pygame.time.set_timer(game.events["SPAWNLIFE"], 6000, True) # spawn a extra life ~3 times per song
 
-    # start the music
+    phaser_time = random.randint(30, 90)
+    pygame.time.set_timer(game.events["SPAWNPHASER"], phaser_time * 1000, True) # spawn a phasing ability every 30 - 90 seconds
+
     keyIndex = 0
-    mixer.music.play()
+    # TODO: time the delay so the obstacles line up with the bar on the beat for each mode
+    # mixer.music.play()
+    # if game.difficulty == 0.5: # easy mode
+    #     pygame.time.set_timer(game.events["STARTMUSIC"], 1500, True)
+    # if game.difficulty == 0.35: # easy mode
+    #     pygame.time.set_timer(game.events["STARTMUSIC"], 1500, True)
+    # if game.difficulty == 0.25: # easy mode
+    #     pygame.time.set_timer(game.events["STARTMUSIC"], 1500, True)
+
 
     player.img.set_colorkey((255, 255, 255))
 
@@ -461,24 +551,31 @@ def run_game():
     while game.state == "running":
         display.fill((255, 255, 255))  # clear screen by filling it with white
 
-        # scrolling background
-        display.blit(game.background, background_rect)  # left image
-        display.blit(
-            game.background, background_rect.move(background_rect.width, 0)
-        )  # right image
-        if game.state == "running":
-            background_rect.move_ip(-1, 0)
-        if background_rect.right == 0:
-            background_rect.x = 0
+        # draw the scrolling background
+        background_rect = draw_background(background_rect)
 
         # draw the guitar strings to screen
         tile_rects = draw_strings()
 
         # move obstacles and other objects across screen
+        #draw_game_objects()
+        # draw obstacles and powerups
         for obstacle in game.obstacles:
             if game.state == "running":
-                obstacle.rect.x -= 2
-            pygame.draw.rect(display, (255, 255, 255), obstacle.rect)
+
+                # faster obstacle moving speed for higher difficulty
+                if game.difficulty == 0.5: # easy mode
+                    obstacle.rect.x -= 2
+                if game.difficulty == 0.35: # medium mode
+                    obstacle.rect.x -= 3
+                if game.difficulty == 0.25: # hard mode
+                    obstacle.rect.x -= 4
+
+                # change color of obstacle after crossing bar
+                # if obstacle.rect.x < 350:
+                #     set_obstacle_color(obstacle)
+                    
+            pygame.draw.rect(display, obstacle.color, obstacle.rect)
 
         for powerup in game.powerups:
             if game.state == "running":
@@ -489,10 +586,13 @@ def run_game():
 
         # move player
         if game.state == "running":
+            # TODO: change player facing direction depending on moving direction
             if moving_right == True:
                 player_movement[0] += 2
             if moving_left == True:
                 player_movement[0] -= 2
+
+            # TODO: add sound effects for jumping (maybe?)
             player_movement[1] += vertical_momentum
             vertical_momentum += 0.2
             if vertical_momentum > 3:
@@ -507,6 +607,13 @@ def run_game():
             obstacle_collision(player.rect, game.obstacles)
 
         powerup_collision(player.rect, game.powerups)
+
+        if game.state == "resuming":
+            countdown(game.counter)
+
+            #unpause the game once timer ends
+            if game.counter == 0:
+                unpause()
 
         for event in pygame.event.get():  # event loop
 
@@ -546,6 +653,7 @@ def run_game():
 
                 # spawn a new obstacle
                 if event.type == game.events["NEWOBSTACLE"]:
+                    print("Stringno:", stringNo)
                     obstacle = Obstacle(stringNo)
                     game.obstacles.append(obstacle)
 
@@ -553,12 +661,14 @@ def run_game():
 
                     # if end of song, win
                     if keyIndex > len(noteKeys) - 1:
+                        # TODO: add win sound effect
                         game.state = "won"
                         break
 
                     noteTime = noteKeys[keyIndex]
-
+                    print("Notetime:", noteTime)
                     noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
+                    print("Notedifftime:", noteDiffTime)
                     stringNo = notes[noteTime]
 
                     # set the timer to spawn the next obstacle
@@ -567,6 +677,7 @@ def run_game():
                 # increase the score every second; higher difficulty = greater increment
                 if event.type == game.events["SCOREUP"]:
                     player.score += (1 - game.difficulty) * 20
+                    player.total_score += (1 - game.difficulty) * 20
 
                 # spawn a life every minute
                 if event.type == game.events["SPAWNLIFE"]:
@@ -578,13 +689,29 @@ def run_game():
                 if event.type == game.events["SPAWNPHASER"]:
                     phaser = Powerup("phaser", (0, 255, 255))
                     game.powerups.append(phaser)
-                    pygame.time.set_timer(game.events["SPAWNPHASER"], 10000, True)
+                    
+                    # set time to spawn the next phaser powerup
+                    phaser_time = random.randint(30, 90)
+                    pygame.time.set_timer(game.events["SPAWNPHASER"], phaser_time * 1000, True)
 
                 # phaser powerup lasts for 5s
                 if event.type == game.events["PHASERTIMER"] and player.powerup == "phaser":
                     player.powerup = None
-                    player.img = pygame.image.load("assets/player.png").convert()
+                    # TODO: add a powerdown sound effect
+                    player.img = pygame.image.load("assets/images/player.png").convert()
                     player.img.set_colorkey((255, 255, 255))
+
+                # start the music with a delay so the obstacles line up with the bar
+                #if event.type == game.events["STARTMUSIC"]:
+                    #mixer.music.play()
+
+                # players gets 2s of recover time after losing a life or unpausing the game
+                if event.type == game.events["RECOVER"]:
+                    player.powerup = None
+
+                # decrement the countdown timer
+                if event.type == game.events["COUNTDOWN"]:
+                    game.counter -= 1
 
         display.blit(player.img, (player.rect.x, player.rect.y))
 
@@ -606,7 +733,7 @@ def run_game():
             pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
 
             keyIndex = 0
-            mixer.music.play()
+            #mixer.music.play()
 
         # win - show game win screen; start new level or quit
         if game.state == "won":

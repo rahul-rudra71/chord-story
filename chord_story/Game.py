@@ -3,17 +3,21 @@ from pygame.locals import *
 
 class Game:
     def __init__(self):
-        self._background = pygame.image.load("assets/background.png")
+        self._background = pygame.image.load("assets/images/background.png")
         self._difficulty = 0.25
         self._state = "running"
         self._obstacles = []
         self._powerups = []
+        self._counter = 0
         self._events = {
             "NEWOBSTACLE": USEREVENT + 1,
             "SCOREUP": USEREVENT + 2,
             "SPAWNLIFE": USEREVENT + 3,
             "SPAWNPHASER": USEREVENT + 4,
             "PHASERTIMER": USEREVENT + 5,
+            "STARTMUSIC": USEREVENT + 6,
+            "RECOVER": USEREVENT + 7,
+            "COUNTDOWN": USEREVENT + 8
         }
 
     @property
@@ -51,6 +55,14 @@ class Game:
     @powerups.setter
     def powerups(self, powerups):
         self._powerups = powerups
+
+    @property
+    def counter(self):
+        return self._counter
+
+    @counter.setter
+    def counter(self, counter):
+        self._counter = counter
 
     @property
     def events(self):
