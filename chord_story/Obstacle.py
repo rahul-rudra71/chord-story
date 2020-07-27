@@ -22,6 +22,7 @@ class Obstacle:
             self._rect = pygame.Rect((300, 165, 15, 15))
 
         self._color = (255, 255, 255)
+        self._stringNum = num
 
     @property
     def rect(self):
@@ -30,6 +31,14 @@ class Obstacle:
     @rect.setter
     def rect(self, rect):
         self._rect = rect
+
+    @property
+    def stringNum(self):
+        return self._stringNum
+
+    @stringNum.setter
+    def stringNum(self, stringNum):
+        self._stringNum = stringNum
 
     @property
     def color(self):

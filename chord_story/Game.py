@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 
+
 class Game:
     def __init__(self):
         self._background = pygame.image.load("assets/images/background.png")
