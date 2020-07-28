@@ -355,8 +355,8 @@ def move(rect, movement, tiles):
     rect.x += movement[0]
 
     # keep player withing window bounds
-    if rect.right > 299:
-        rect.right = 299
+    if rect.right > 599:
+        rect.right = 599
     if rect.x < 0:
         rect.x = 0
 
@@ -383,7 +383,7 @@ def obstacle_collision(player_rect, obstacles):
             pygame.time.set_timer(game.events["RECOVER"], 2000, True)
 
         # remove the obstacle once off screen
-        if obstacle.rect.left < -15:
+        if obstacle.rect.right < 0:
             obstacles.remove(obstacle)
 
         # out of lives = game over
@@ -413,7 +413,7 @@ def powerup_collision(player_rect, powerups):
             powerups.remove(powerup)
 
         # remove once off screen
-        if powerup.rect.left < -15:
+        if powerup.rect.right < 0:
             powerups.remove(powerup)
 
 
@@ -649,9 +649,9 @@ def run_game():
         if game.state == "running":
             # TODO: change player facing direction depending on moving direction
             if moving_right == True:
-                player_movement[0] += 2
+                player_movement[0] += 4
             if moving_left == True:
-                player_movement[0] -= 2
+                player_movement[0] -= 4
 
             # TODO: add sound effects for jumping (maybe?)
             player_movement[1] += vertical_momentum
@@ -695,9 +695,9 @@ def run_game():
                     if event.key == K_DOWN:
                         if air_timer < 6:
                             vertical_momentum = 3
-                        player.rect.y += 12
-                        if player.rect.y > 166:
-                            player.rect.y = 166
+                        player.rect.y += 24
+                        if player.rect.y > 331:
+                            player.rect.y = 331
 
                 # stop moving on release
                 if event.type == KEYUP:
