@@ -1,3 +1,4 @@
 .git/
 .idea/
+chord_story/__pycache__/
 venv/
