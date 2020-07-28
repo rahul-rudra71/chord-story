@@ -198,8 +198,6 @@ def paused():
         if continue_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, continue_button)
             if click:
-                # game.counter = 3
-                # pygame.time.set_timer(game.events["COUNTDOWN"], 1000)
                 game.state = "resuming"
                 unpause()
                 return
@@ -236,11 +234,14 @@ def paused():
 
 # unpause the game
 def unpause():
+    game.counter = 3
     pygame.time.set_timer(game.events["COUNTDOWN"], 1000)
 
     background_rect = game.background.get_rect()
 
     while game.state == "resuming":
+        display.fill((255, 255, 255))
+
         draw_background(background_rect)
         draw_strings()
         draw_game_objects()
@@ -250,6 +251,8 @@ def unpause():
         # display the lives and score
         update_lives()
         update_score()
+
+        countdown(game.counter)
 
         if game.counter == 0:
             game.state = "running"
@@ -264,6 +267,9 @@ def unpause():
             # decrement the countdown timer
             if event.type == game.events["COUNTDOWN"]:
                 game.counter -= 1
+
+        pygame.display.update()
+        clock.tick(60)
 
 
 # open the restart screen
@@ -613,13 +619,6 @@ def run_game():
 
         powerup_collision(player.rect, game.powerups)
 
-        # if game.state == "resuming":
-        #     countdown(game.counter)
-        #
-        #     # unpause the game once timer ends
-        #     if game.counter == 0:
-        #         unpause()
-
         for event in pygame.event.get():  # event loop
 
             # quit on x clicked
@@ -635,6 +634,7 @@ def run_game():
                     if event.key == pygame.K_p:
                         game.state = "paused"
                         paused()
+                        pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteDiffTime * 1000), True)
                     if event.key == K_RIGHT:
                         moving_right = True
                     if event.key == K_LEFT:
