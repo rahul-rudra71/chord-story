@@ -433,16 +433,21 @@ def run_game():
 
     # load the notes and music
     notes = decode[0]
+    times = decode[2]
     mixer.music.load(decode[1][:-4] + ".wav")
     noteKeys = list(notes.keys())
+    timeKeys = list(times.keys())
 
     # deleted the temporary wav file
     if decode[1].endswith(".mp3"):
         os.remove(decode[1][:-4] + ".wav")
 
-    # get the first note/obstacle
+    # get the first note/obstacle and the first note length
     noteTime = noteKeys[0]
     stringNo = notes[noteTime]
+    timeStart = timeKeys[0]
+    timeEnd = times[timeStart]
+
 
     # start the timers for game events and spawning
     pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
@@ -546,7 +551,11 @@ def run_game():
 
                 # spawn a new obstacle
                 if event.type == game.events["NEWOBSTACLE"]:
-                    obstacle = Obstacle(stringNo)
+                    #240 = framerate * unit/frame
+                    noteLength = timeEnd - timeStart
+                    if(noteLength <=3):
+                      noteLength = 5
+                    obstacle = Obstacle(stringNo, round(240 * noteLength))
                     game.obstacles.append(obstacle)
 
                     keyIndex = keyIndex + 1
@@ -557,9 +566,11 @@ def run_game():
                         break
 
                     noteTime = noteKeys[keyIndex]
+                    timeStart = timeKeys[keyIndex]
 
                     noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
                     stringNo = notes[noteTime]
+                    timeEnd = times[timeStart]
 
                     # set the timer to spawn the next obstacle
                     pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteDiffTime * 1000), True)
@@ -602,6 +613,8 @@ def run_game():
 
             noteTime = noteKeys[0]
             stringNo = notes[noteTime]
+            timeStart = timeKeys[0]
+            timeEnd = times[timeStart]
 
             pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
 
@@ -619,6 +632,8 @@ def run_game():
 
             noteTime = noteKeys[0]
             stringNo = notes[noteTime]
+            timeStart = timeKeys[0]
+            timeEnd = times[timeStart]
 
             pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
 
