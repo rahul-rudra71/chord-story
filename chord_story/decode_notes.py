@@ -9,8 +9,16 @@ from tkinter import *
 def detect_pitch(magnitudes, pitches, t):
     index = magnitudes[:, t].argmax()
     pitch = pitches[index, t]
+    #gets the last time for which a pitch has roughly the same frequency
+    #adjust this for sensitivity on note detection for lengths
+    for x in range(t, pitches.shape[1]):
+      if(pitches[index, x] != 0.0):
+        print(x, pitches[index, x])
+    print("------------")
     while(math.isclose(pitches[index, t], pitches[index, t+1], abs_tol=10**1)):
       t += 1
+      if(t == pitches.shape[1] - 1):
+        return pitch, t
     return pitch, t
 
 
@@ -102,7 +110,7 @@ def decode(note_offset):
     root = Tk()
     root.withdraw()
     root.update()
-    filename = filedialog.askopenfilename(filetypes=[("wav files", "*.wav")])
+    filename = filedialog.askopenfilename(filetypes=[("wav files", "*.wav"), ("mp3 files", "*.mp3")])
     root.destroy()
 
     clip, sample = librosa.load(filename)

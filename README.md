@@ -1,28 +1,44 @@
-# chord-story
+# Chord Story
+
+## Description
 Working Prototype development repo for Chord Story
 
 Github: https://github.com/michaelarobertsjr/chord-story.git
 
-Apt-Get modules needed:
-  ffmpeg:
-    sudo apt install ffmpeg
-  tk:
-    sudo apt-get install python3-tk
+## Install Instructions
+* Apt-Get modules needed:
+  * ffmpeg: sudo apt install ffmpeg
+  * tk: sudo apt-get install python3-tk
+* Pip install:
+  * In directory with setup.py, run "pip3 install ."
+  * Note: May need to run sudo with this command
+* Executable line to run: "chordstory"
 
-Pip install: 
-  In directory with setup.py, run "pip3 install ." (may need to run sudo with this command)
-  
-  Executable line to run: "chordstory"
+## Gamplay
+1. Run command "chordstory"
+2. Select a play mode
+   * Classic is the only mode currently implemented.
+3. Select a difficulty
+   * Harder difficulties having more frequent note generation
+4. Select the audio file you would like to use for this level
+   * .wav or .mp3 files
+   * We have included a folder of possible files under folder "music", but the application should run with any '.wav' file. 
+5. The level will begin
+   * Move the player object between and along the six rendered strings to avoid the incoming notes. 
+   * If you lose 3 lives (by running into 3 of the obstacles generated) you will receive a game over message and be given the option to either restart the level or quit to main menu. The same options are given if you complete the level without losing 3 lives, winning the game.
 
-Gameplay:
-Running this command will bring up the main menu window, where you may select a play mode (Classic is the only mode currently implemented).  After this you can select a difficulty (with harder difficulties having more frequent note generation) and select the audio file you would like to use for this level (.wav currently implemented).  We have included a folder of possible files, but the application should run with any '.wav' file.  After this, the level will begin and you can move the player object between and along the six rendered strings to avoid the incoming notes.  If you lose 3 lives (by running into 3 of the obstacles generated) you will receive a game over message and be given the option to either restart the level or quit to main menu.  The same options are given if you complete the level without losing 3 lives, winning the game.
+## Controls
+* Up/Down Arrow Keys --> move vertically between strings
+* Left/Right Arrow Keys --> move horizontally along the current string
+* p Key --> pause the game
 
-Known Glitches:
-Sometimes when the player restarts the game, the player object will move to the right side of the screen.  This is resolved by hitting the right arrow key to regain control.
+## Other Game Features
+* Powerups:
+  * Extra Life: Grants the player +1 life
+  * Invincibility: Grants the player the ability to phase through obstacles 
 
-Controls:
-Up/Down Arrow Keys --> moving vertically between strings
-Left/Right Arrow Keys --> moving horizontally along the current string
-p Key --> pause the game (when paused you may either resume the game or quit the level and return to main menu)
+## Known Glitches
+* Sometimes when the player restarts the game, the player object will move to the right side of the screen. This is resolved by hitting the right arrow key to regain control.
 
-This project requires an Ubuntu 20.04 VM to run.
+## Other Notes
+* This project requires an Ubuntu 20.04 VM to run.
