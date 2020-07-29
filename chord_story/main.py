@@ -13,7 +13,7 @@ from chord_story.Player import Player
 # initialize display
 clock = pygame.time.Clock()
 pygame.init()
-mixer.init()
+#mixer.init()
 pygame.display.set_caption("Chord Story")
 WINDOW_SIZE = (600, 400)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
@@ -40,25 +40,44 @@ def main_menu():
 
         mousex, mousey = pygame.mouse.get_pos()
 
-        # create the classic mode button
-        classic_button = pygame.Rect(50, 50, 150, 60)
+        ######
+        default_image = pygame.image.load("assets/images/playButton.png")
 
-        # render button
-        pygame.draw.rect(screen, (156, 17, 21), classic_button)
+        highlighted_image = pygame.image.load("assets/images/backButton.png")
 
-        highlight = (232, 58, 63)
+        rects = [
+            default_image.get_rect(center=(150, 100)),
+            highlighted_image.get_rect(center=(150, 100)),
+        ]
 
-        if classic_button.collidepoint((mousex, mousey)):
-            pygame.draw.rect(screen, highlight, classic_button)
+        screen.blit(default_image, rects[0])
+        if rects[0].collidepoint((mousex, mousey)):
+            screen.blit(highlighted_image, rects[1])
             if click:
-                # play the game if the button is pressed
+                #play the game if the button is pressed
                 select_difficulty()
                 run_game()
+        ######
 
-        classic_font = pygame.font.Font("freesansbold.ttf", 17)
-        classic_text = classic_font.render(
-            "CLASSIC MODE", True, (255, 255, 255))
-        screen.blit(classic_text, (59, 72))
+        # create the classic mode button
+        #classic_button = pygame.Rect(50, 50, 150, 60)
+
+        # render button
+        #pygame.draw.rect(screen, (156, 17, 21), classic_button)
+
+        #highlight = (232, 58, 63)
+
+        #if classic_button.collidepoint((mousex, mousey)):
+        #    pygame.draw.rect(screen, highlight, classic_button)
+        #    if click:
+        #        #play the game if the button is pressed
+        #        select_difficulty()
+        #        run_game()
+
+        #classic_font = pygame.font.Font("freesansbold.ttf", 17)
+        #classic_text = classic_font.render(
+        #    "CLASSIC MODE", True, (255, 255, 255))
+        #screen.blit(classic_text, (59, 72))
 
         # TODO: add a game instruction page with controls and other info
 
@@ -172,7 +191,7 @@ def countdown(seconds):
 def paused():
     click = False
 
-    pygame.mixer.music.pause()
+    #pygame.mixer.music.pause()
 
     while game.state == "paused":
         mousex, mousey = pygame.mouse.get_pos()
@@ -263,7 +282,7 @@ def unpause():
         if game.counter == 0:
             game.state = "running"
             player.powerup = None
-            pygame.mixer.music.unpause()
+            #pygame.mixer.music.unpause()
 
         for event in pygame.event.get():  # event loop
             if event.type == QUIT:
@@ -380,7 +399,7 @@ def obstacle_collision(player_rect, obstacles):
         # player loses a life; obstacle hit disappears and the player gets 2s of recovery time
         if player_rect.colliderect(obstacle):
             # TODO: change the player to a damage avatar momentarily (if possible, make flashing animation)
-            effect = pygame.mixer.Sound('assets/sounds/damage.wav')
+            #effect = pygame.mixer.Sound('assets/sounds/damage.wav')
             effect.play()
             player.lives = player.lives - 1
             obstacles.remove(obstacle)
@@ -393,7 +412,7 @@ def obstacle_collision(player_rect, obstacles):
 
         # out of lives = game over
         if player.lives == 0:
-            effect = pygame.mixer.Sound('assets/sounds/lose.wav')
+            #effect = pygame.mixer.Sound('assets/sounds/lose.wav')
             effect.play()
             game.state = "dead"
 
@@ -405,14 +424,14 @@ def powerup_collision(player_rect, powerups):
 
             # gain an extra life
             if powerup.type == "life":
-                effect = pygame.mixer.Sound('assets/sounds/life.wav')
+                #effect = pygame.mixer.Sound('assets/sounds/life.wav')
                 effect.play()
                 player.lives += 1
 
             # invulnerable to obstacles for a bit
             if powerup.type == "phaser":
                 player.powerup = "phaser"
-                effect = pygame.mixer.Sound('assets/sounds/powerup.wav')
+                #effect = pygame.mixer.Sound('assets/sounds/powerup.wav')
                 effect.play()
                 player.img = pygame.image.load("assets/images/player1_invincible.png").convert_alpha()
                 pygame.time.set_timer(game.events["PHASERTIMER"], 5000, True)
@@ -443,7 +462,7 @@ def set_obstacle_color(obstacle):
 
 # display the game over screen
 def game_over():
-    mixer.music.stop()
+    #mixer.music.stop()
     font = pygame.font.Font("freesansbold.ttf", 80)
     text = font.render("GAME OVER", True, (255, 0, 0))
     text_rect = text.get_rect(
@@ -458,7 +477,7 @@ def game_won():
     text_rect = text.get_rect(
         center=(screen.get_width() / 2, screen.get_height() / 2))
     screen.blit(text, text_rect)
-    mixer.music.stop()
+    #mixer.music.stop()
 
 
 # update the lives displayed on screen
@@ -586,7 +605,7 @@ def run_game():
 
     # load the notes and music
     notes = decode[0]
-    mixer.music.load(decode[1][:-4] + ".wav")
+    #mixer.music.load(decode[1][:-4] + ".wav")
     noteKeys = list(notes.keys())
 
     # deleted the temporary wav file
@@ -605,7 +624,7 @@ def run_game():
     phaser_time = random.randint(30, 90) # spawn a phasing ability every 30 - 90 seconds
     pygame.time.set_timer(game.events["SPAWNPHASER"], phaser_time * 1000)
 
-    # TODO: add bonus point obstacles  
+    # TODO: add bonus point obstacles
 
     keyIndex = 0
 
@@ -699,7 +718,7 @@ def run_game():
 
                     # if end of song, win
                     if keyIndex > len(noteKeys) - 1:
-                        effect = pygame.mixer.Sound('assets/sounds/win.wav')
+                        #effect = pygame.mixer.Sound('assets/sounds/win.wav')
                         effect.play()
                         game.state = "won"
                         break
@@ -735,14 +754,14 @@ def run_game():
                 # phaser powerup lasts for 5s
                 if event.type == game.events["PHASERTIMER"] and player.powerup == "phaser":
                     player.powerup = None
-                    effect = pygame.mixer.Sound('assets/sounds/powerdown.wav')
+                    #effect = pygame.mixer.Sound('assets/sounds/powerdown.wav')
                     effect.play()
                     player.img = pygame.image.load("assets/images/player1.png").convert()
                     player.img.set_colorkey((255, 255, 255))
 
                 # start the music with a delay so the obstacles line up with the bar
-                if event.type == game.events["STARTMUSIC"]:
-                    mixer.music.play()
+                #if event.type == game.events["STARTMUSIC"]:
+                    #mixer.music.play()
 
                 # players gets 2s of recover time after losing a life or unpausing the game
                 if event.type == game.events["RECOVER"]:
