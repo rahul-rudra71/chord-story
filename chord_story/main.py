@@ -70,9 +70,8 @@ def main_menu():
         if aboutRects[0].collidepoint((mousex, mousey)):
             screen.blit(aboutH_image, aboutRects[1])
             if click:
-                # display the about page
-                menu_open = False
-                display_about()           
+                display_about()
+                print("hello")
 
         click = False
 
@@ -91,23 +90,22 @@ def main_menu():
 
 def display_about():
     click = False
-    aboutMenuOpen = True
 
-    while aboutMenuOpen:
+    about_open = True
 
+    while about_open:
         display.fill((0, 0, 0))  # clear screen
-
         aboutScreen = pygame.image.load("assets/images/abtBackground.png")
         screen.blit(aboutScreen, (0, 0))
-
+    
         # create the back button
 
         back_image = pygame.image.load("assets/images/buttons/back.png")
         backH_image = pygame.image.load("assets/images/buttons/backH.png")
 
         backRects = [
-            back_image.get_rect(center=(150, 330)),
-            backH_image.get_rect(center=(150, 330)),
+            back_image.get_rect(center=(155, 335)),
+            backH_image.get_rect(center=(155, 335)),
         ]
 
         mousex, mousey = pygame.mouse.get_pos()
@@ -116,8 +114,19 @@ def display_about():
         if backRects[0].collidepoint((mousex, mousey)):
             screen.blit(backH_image, backRects[1])
             if click:  
-                main_menu()
                 aboutMenuOpen = False
+                main_menu()
+
+        for event in pygame.event.get():  # event loop
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
+
+        pygame.display.update()
+        clock.tick(60)
 
 
 # sets the difficulty level of the current game
