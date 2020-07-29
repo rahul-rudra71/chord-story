@@ -46,8 +46,6 @@ class Obstacle:
     @color.setter
     def color(self, color):
         self._color = color
-<<<<<<< HEAD
-=======
 
     @property
     def color_set(self):
@@ -56,4 +54,3 @@ class Obstacle:
     @color_set.setter
     def color_set(self, color_set):
         self._color_set = color_set
->>>>>>> pygame
