@@ -3,10 +3,11 @@ import pygame
 
 class Player:
     def __init__(self):
-        self._rect = pygame.Rect(100, 100, 5, 13)
+        self._rect = pygame.Rect(215, 200, 30, 36)
         self._lives = 3
-        self._img = pygame.image.load("assets/player.png").convert()
+        self._img = pygame.image.load("assets/images/player1.png").convert()
         self._score = 0
+        self._total_score = 0
         self._powerup = None
 
     @property
@@ -40,6 +41,14 @@ class Player:
     @score.setter
     def score(self, score):
         self._score = score
+
+    @property
+    def total_score(self):
+        return self._total_score
+
+    @total_score.setter
+    def total_score(self, total_score):
+        self._total_score = total_score
 
     @property
     def powerup(self):

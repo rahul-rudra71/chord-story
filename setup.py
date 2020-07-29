@@ -7,7 +7,7 @@ setup(
     description='fundamental game play and audio processing',
     py_modules=['chord_story.main'],
     packages = ['chord_story',],
-    install_requires=['librosa','numba==0.48.0','pygame==2.0.0.dev10'],
+    install_requires=['librosa','numba==0.48.0','pygame==2.0.0.dev10', 'pydub'],
 
     entry_points={
         'console_scripts': [

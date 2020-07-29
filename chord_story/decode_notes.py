@@ -48,7 +48,7 @@ def trim_times(times):
     return times
 
 
-def assign_string(nt, prev):
+def assign_string(nt, prev_str, prev_nt):
     # string 0 = E4 - B5
     # string 1 = B3 - F#5
     # string 2 = G3 - D5
@@ -70,39 +70,76 @@ def assign_string(nt, prev):
 
     out = ''
     possible = []
-    if int(nt[len(nt) - 1]) < 2:
-        out = 'low'
+    if prev_nt == nt:
+        out = prev_str
+    else:
+        if int(nt[len(nt) - 1]) < 2:
+            out = 'low'
 
-    if int(nt[len(nt) - 1]) > 5:
-        out = 'high'
+        if int(nt[len(nt) - 1]) > 5:
+            out = 'high'
 
-    if nt in string5:
-        possible.append('5')
+        if nt in string5:
+            possible.append('5')
 
-    if nt in string4:
-        possible.append('4')
+        if nt in string4:
+            possible.append('4')
 
-    if nt in string3:
-        possible.append('3')
+        if nt in string3:
+            possible.append('3')
 
-    if nt in string2:
-        possible.append('2')
+        if nt in string2:
+            possible.append('2')
 
-    if nt in string1:
-        possible.append('1')
+        if nt in string1:
+            possible.append('1')
 
-    if nt in string0:
-        possible.append('0')
+        if nt in string0:
+            possible.append('0')
 
-    # Check possible strings and assign note to one of them while ensuring the previous string
-    # is not reused for better playability
-    if len(possible) != 0:
-        if prev in possible and len(possible) != 1:
-            possible.remove(prev)
-            out = random.choice(possible)
-        else:
-            out = random.choice(possible)
-
+        # Check possible strings and assign note to one of them while ensuring the previous string
+        # is not reused for better playability
+        if len(possible) != 0:
+            if prev_str in possible and len(possible) != 1:
+                # Cut out possibilities that would deviate shown notes from the melody
+                octave = int(nt[len(nt) - 1])
+                letter = ord(nt[0])
+                old_octave = int(prev_nt[len(prev_nt) - 1])
+                old_letter = ord(prev_nt[0])
+                # Check for octave difference
+                if octave > old_octave:
+                    for i in possible:
+                        if i > prev_str:
+                            possible.remove(i)
+                elif octave < old_octave:
+                    for i in possible:
+                        if i < prev_str:
+                            possible.remove(i)
+                # Check for note letter difference
+                if letter > old_letter:
+                    for i in possible:
+                        if (int(i) > int(prev_str)) or (abs(int(i) - int(prev_str)) > 2):
+                            possible.remove(i)
+                    if len(possible) != 1:
+                        possible.remove(prev_str)
+                    out = random.choice(possible)
+                elif letter < old_letter:
+                    for i in possible:
+                        if (int(i) < int(prev_str)) or (abs(int(i) - int(prev_str)) > 2):
+                            possible.remove(i)
+                    if len(possible) != 1:
+                        possible.remove(prev_str)
+                    out = random.choice(possible)
+                else:
+                    for i in possible:
+                        if abs(int(i) - int(prev_str)) > 2:
+                            possible.remove(i)
+                    if len(possible) != 1:
+                        possible.remove(prev_str)
+                    out = random.choice(possible)
+            else:
+                out = random.choice(possible)
+                
     return out
 
 
@@ -129,7 +166,8 @@ def decode(note_offset):
     trimmed_times = trim_times(new_times)
 
     x = 0
-    previous = ''
+    previous_str = ''
+    previous_nt = ''
     keyout = {}
     timeout = {}
     while x < len(trimmed_onset):
@@ -142,22 +180,31 @@ def decode(note_offset):
         # Obstacle.py.  Iterate through the output dictionary
         # to obtain obstacle string placements and times
 
-        temp_assign = assign_string(note, previous)
+        temp_assign = assign_string(note, previous_str, previous_nt)
         if temp_assign == 'low':
+            prev_oct = int(previous_nt[len(previous_nt) - 1])
             # Note must be below range, change to 2 to be assigned
-            note = note[:-1] + '2'
-            temp_assign = assign_string(note, previous)
+            if prev_oct != 2:
+                note = note[:-1] + str(prev_oct - 1)
+            else:
+                note = note[:-1] + '2'
+            temp_assign = assign_string(note, previous_str, previous_nt)
         elif temp_assign == '':
             # Note must be somewhere from C2 - D#2, change to 3 to be assigned
             note = note[:-1] + '3'
-            temp_assign = assign_string(note, previous)
+            temp_assign = assign_string(note, previous_str, previous_nt)
         elif temp_assign == 'high':
+            prev_oct = int(previous_nt[len(previous_nt) - 1])
             # Note must be above range, change to 5 to be assigned
-            note = note[:-1] + '5'
-            temp_assign = assign_string(note, previous)
+            if prev_oct != 5:
+                note = note[:-1] + str(prev_oct + 1)
+            else:
+                note = note[:-1] + '5'
+            temp_assign = assign_string(note, previous_str, previous_nt)
 
         keyout[trimmed_times[x]] = temp_assign
-        previous = temp_assign
+        previous_str = temp_assign
+        previous_nt = note
 
         x = x + 1
     # Output dictionary of times and string assignments
