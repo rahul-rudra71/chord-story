@@ -35,24 +35,24 @@ def main_menu():
     while menu_open:
 
         display.fill((255, 255, 255))  # clear screen by filling it with white
-        chord = pygame.image.load("assets/images/mainmenu.png")
+        chord = pygame.image.load("assets/images/main.png")
         screen.blit(chord, (0, 0))
 
         mousex, mousey = pygame.mouse.get_pos()
 
         ######
-        default_image = pygame.image.load("assets/images/playButton.png")
+        play_image = pygame.image.load("assets/images/buttons/play.png")
 
-        highlighted_image = pygame.image.load("assets/images/backButton.png")
+        playH_image = pygame.image.load("assets/images/buttons/playH.png")
 
         rects = [
-            default_image.get_rect(center=(150, 100)),
-            highlighted_image.get_rect(center=(150, 100)),
+            play_image.get_rect(center=(150, 100)),
+            playH_image.get_rect(center=(150, 100)),
         ]
 
-        screen.blit(default_image, rects[0])
+        screen.blit(play_image, rects[0])
         if rects[0].collidepoint((mousex, mousey)):
-            screen.blit(highlighted_image, rects[1])
+            screen.blit(playH_image, rects[1])
             if click:
                 #play the game if the button is pressed
                 select_difficulty()
