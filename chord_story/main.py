@@ -553,8 +553,8 @@ def run_game():
                 if event.type == game.events["NEWOBSTACLE"]:
                     #240 = framerate * unit/frame
                     noteLength = timeEnd - timeStart
-                    if(noteLength <=3):
-                      noteLength = 5
+                    # if(noteLength <=0.0):
+                    #   noteLength = 0.0
                     obstacle = Obstacle(stringNo, round(240 * noteLength))
                     game.obstacles.append(obstacle)
 
