@@ -40,46 +40,39 @@ def main_menu():
 
         mousex, mousey = pygame.mouse.get_pos()
 
-        ######
+        # creates the play button on the home screen
         play_image = pygame.image.load("assets/images/buttons/play.png")
-
         playH_image = pygame.image.load("assets/images/buttons/playH.png")
 
-        rects = [
-            play_image.get_rect(center=(150, 100)),
-            playH_image.get_rect(center=(150, 100)),
+        playRects = [
+            play_image.get_rect(center=(415, 180)),
+            playH_image.get_rect(center=(415, 180)),
         ]
 
-        screen.blit(play_image, rects[0])
-        if rects[0].collidepoint((mousex, mousey)):
-            screen.blit(playH_image, rects[1])
+        screen.blit(play_image, playRects[0])
+        if playRects[0].collidepoint((mousex, mousey)):
+            screen.blit(playH_image, playRects[1])
             if click:
                 #play the game if the button is pressed
                 select_difficulty()
                 run_game()
-        ######
 
-        # create the classic mode button
-        #classic_button = pygame.Rect(50, 50, 150, 60)
 
-        # render button
-        #pygame.draw.rect(screen, (156, 17, 21), classic_button)
+        # creates the about button on the home screen
+        about_image = pygame.image.load("assets/images/buttons/about.png")
+        aboutH_image = pygame.image.load("assets/images/buttons/aboutH.png")
 
-        #highlight = (232, 58, 63)
+        aboutRects = [
+            about_image.get_rect(center=(415, 300)),
+            aboutH_image.get_rect(center=(415, 300)),
+        ]
 
-        #if classic_button.collidepoint((mousex, mousey)):
-        #    pygame.draw.rect(screen, highlight, classic_button)
-        #    if click:
-        #        #play the game if the button is pressed
-        #        select_difficulty()
-        #        run_game()
-
-        #classic_font = pygame.font.Font("freesansbold.ttf", 17)
-        #classic_text = classic_font.render(
-        #    "CLASSIC MODE", True, (255, 255, 255))
-        #screen.blit(classic_text, (59, 72))
-
-        # TODO: add a game instruction page with controls and other info
+        screen.blit(about_image, aboutRects[0])
+        if aboutRects[0].collidepoint((mousex, mousey)):
+            screen.blit(aboutH_image, aboutRects[1])
+            if click:
+                # TODO: Create about screen   
+                print("display about screen")             
 
         click = False
 
@@ -104,17 +97,17 @@ def select_difficulty():
     while select:
         display.fill((224, 132, 132))  # clear screen by filling it with pink
 
-        pinkbackground = pygame.image.load("assets/images/pink.png")
+        pinkbackground = pygame.image.load("assets/images/difficultyFrame.png")
 
         screen.blit(pinkbackground, (0, 0))
 
-        font = pygame.font.Font("freesansbold.ttf", 45)
-        text = font.render("CHOOSE THE DIFFICULTY", True, (0, 0, 0))
-        text2 = font.render("CHOOSE THE DIFFICULTY", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(screen.get_width() / 2, 45))
-        text_rect2 = text.get_rect(center=((screen.get_width() / 2) + 2, 47))
-        screen.blit(text, text_rect)
-        screen.blit(text2, text_rect2)
+        #font = pygame.font.Font("freesansbold.ttf", 45)
+        #text = font.render("CHOOSE THE DIFFICULTY", True, (0, 0, 0))
+        #text2 = font.render("CHOOSE THE DIFFICULTY", True, (255, 255, 255))
+        #text_rect = text.get_rect(center=(screen.get_width() / 2, 45))
+        #text_rect2 = text.get_rect(center=((screen.get_width() / 2) + 2, 47))
+        #screen.blit(text, text_rect)
+        #screen.blit(text2, text_rect2)
 
         mousex, mousey = pygame.mouse.get_pos()
 
