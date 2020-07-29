@@ -169,10 +169,11 @@ def decode(note_offset):
 
         temp_assign = assign_string(note, previous_str, previous_nt)
         if temp_assign == 'low':
-            prev_oct = int(previous_nt[len(previous_nt) - 1])
-            # Note must be below range, change to 2 to be assigned
-            if prev_oct != 2:
-                note = note[:-1] + str(prev_oct - 1)
+            # Note must be below range, modify to be assigned
+            if len(previous_nt) != 0:
+                prev_oct = int(previous_nt[len(previous_nt) - 1])
+                if prev_oct != 2:
+                    note = note[:-1] + str(prev_oct - 1)
             else:
                 note = note[:-1] + '2'
             temp_assign = assign_string(note, previous_str, previous_nt)
@@ -181,10 +182,11 @@ def decode(note_offset):
             note = note[:-1] + '3'
             temp_assign = assign_string(note, previous_str, previous_nt)
         elif temp_assign == 'high':
-            prev_oct = int(previous_nt[len(previous_nt) - 1])
-            # Note must be above range, change to 5 to be assigned
-            if prev_oct != 5:
-                note = note[:-1] + str(prev_oct + 1)
+            # Note must be above range, modify to be assigned
+            if len(previous_nt) != 0:
+                prev_oct = int(previous_nt[len(previous_nt) - 1])
+                if prev_oct != 5:
+                    note = note[:-1] + str(prev_oct + 1)
             else:
                 note = note[:-1] + '5'
             temp_assign = assign_string(note, previous_str, previous_nt)
