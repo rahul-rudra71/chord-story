@@ -37,7 +37,7 @@ def trim_times(times):
     return times
 
 
-def assign_string(nt, prev):
+def assign_string(nt, prev_str, prev_nt):
     # string 0 = E4 - B5
     # string 1 = B3 - F#5
     # string 2 = G3 - D5

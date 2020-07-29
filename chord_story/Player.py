@@ -3,11 +3,9 @@ import pygame
 
 class Player:
     def __init__(self):
-        self._rect = pygame.Rect(200, 200, 10, 26)
-        # self._rect = pygame.Rect(100, 100, 5, 13)
+        self._rect = pygame.Rect(215, 200, 30, 36)
         self._lives = 3
-        # TODO: replace player image with new sprite
-        self._img = pygame.image.load("assets/images/player.png").convert()
+        self._img = pygame.image.load("assets/images/player1.png").convert()
         self._score = 0
         self._total_score = 0
         self._powerup = None

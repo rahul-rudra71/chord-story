@@ -4,7 +4,7 @@ from pygame.locals import *
 
 class Game:
     def __init__(self):
-        self._background = pygame.image.load("assets/images/background.png")
+        self._background = pygame.image.load("assets/images/spec.png")
         self._difficulty = 0.25
         self._state = "running"
         self._obstacles = []
