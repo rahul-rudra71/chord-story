@@ -57,7 +57,6 @@ def main_menu():
                 select_difficulty()
                 run_game()
 
-
         # creates the about button on the home screen
         about_image = pygame.image.load("assets/images/buttons/about.png")
         aboutH_image = pygame.image.load("assets/images/buttons/aboutH.png")
@@ -97,9 +96,53 @@ def select_difficulty():
     while select:
         display.fill((224, 132, 132))  # clear screen by filling it with pink
 
-        pinkbackground = pygame.image.load("assets/images/difficultyFrame.png")
+        selectDifficultyScreen = pygame.image.load("assets/images/difficultyFrame.png")
 
-        screen.blit(pinkbackground, (0, 0))
+        screen.blit(selectDifficultyScreen, (0, 0))
+
+
+        # creates the easy medium and hard buttons on the select difficulty screen
+        easy_image = pygame.image.load("assets/images/buttons/easy.png")
+        easyH_image = pygame.image.load("assets/images/buttons/easyH.png")
+
+        med_image = pygame.image.load("assets/images/buttons/med.png")
+        medH_image = pygame.image.load("assets/images/buttons/medH.png")
+
+        hard_image = pygame.image.load("assets/images/buttons/hard.png")
+        hardH_image = pygame.image.load("assets/images/buttons/hardH.png")
+
+        easyRects = [
+            easy_image.get_rect(center=(300, 120)),
+            easyH_image.get_rect(center=(300, 120)),
+        ]
+
+        medRects = [
+            med_image.get_rect(center=(300, 220)),
+            medH_image.get_rect(center=(300, 220)),
+        ]
+
+        hardRects = [
+            hard_image.get_rect(center=(300, 320)),
+            hardH_image.get_rect(center=(300, 320)),
+        ]
+
+        screen.blit(easy_image, easyRects[0])
+        if easyRects[0].collidepoint((mousex, mousey)):
+            screen.blit(easyH_image, easyRects[1])
+            if click:  
+                print("EASY")    
+        
+        screen.blit(med_image, medRects[0])
+        if medRects[0].collidepoint((mousex, mousey)):
+            screen.blit(medH_image, medRects[1])
+            if click:  
+                print("Med")
+        
+        screen.blit(hard_image, hardRects[0])
+        if hardRects[0].collidepoint((mousex, mousey)):
+            screen.blit(hardH_image, hardRects[1])
+            if click:  
+                print("HARD")
 
         #font = pygame.font.Font("freesansbold.ttf", 45)
         #text = font.render("CHOOSE THE DIFFICULTY", True, (0, 0, 0))
@@ -139,26 +182,26 @@ def select_difficulty():
                 game.difficulty = 0.25
                 select = False
 
-        # easy text
-        font = pygame.font.Font("freesansbold.ttf", 35)
-        text = font.render("EASY", True, (0, 0, 0))
-        text2 = font.render("EASY", True, (224, 132, 132))
-        screen.blit(text, (247, 116))
-        screen.blit(text2, (249, 118))
+        # # easy text
+        # font = pygame.font.Font("freesansbold.ttf", 35)
+        # text = font.render("EASY", True, (0, 0, 0))
+        # text2 = font.render("EASY", True, (224, 132, 132))
+        # screen.blit(text, (247, 116))
+        # screen.blit(text2, (249, 118))
 
-        # medium text
-        font = pygame.font.Font("freesansbold.ttf", 30)
-        text = font.render("MEDIUM", True, (0, 0, 0))
-        text2 = font.render("MEDIUM", True, (224, 132, 132))
-        screen.blit(text, (237, 216))
-        screen.blit(text2, (239, 218))
+        # # medium text
+        # font = pygame.font.Font("freesansbold.ttf", 30)
+        # text = font.render("MEDIUM", True, (0, 0, 0))
+        # text2 = font.render("MEDIUM", True, (224, 132, 132))
+        # screen.blit(text, (237, 216))
+        # screen.blit(text2, (239, 218))
 
-        # hard text
-        font = pygame.font.Font("freesansbold.ttf", 35)
-        text = font.render("HARD", True, (0, 0, 0))
-        text2 = font.render("HARD", True, (224, 132, 132))
-        screen.blit(text, (247, 316))
-        screen.blit(text2, (249, 318))
+        # # hard text
+        # font = pygame.font.Font("freesansbold.ttf", 35)
+        # text = font.render("HARD", True, (0, 0, 0))
+        # text2 = font.render("HARD", True, (224, 132, 132))
+        # screen.blit(text, (247, 316))
+        # screen.blit(text2, (249, 318))
 
         for event in pygame.event.get():  # event loop
             if event.type == QUIT:
