@@ -70,8 +70,8 @@ def main_menu():
         if aboutRects[0].collidepoint((mousex, mousey)):
             screen.blit(aboutH_image, aboutRects[1])
             if click:
-                # TODO: Create about screen   
-                print("display about screen")             
+                # display the about page
+                display_about()           
 
         click = False
 
@@ -88,16 +88,28 @@ def main_menu():
         clock.tick(60)
 
 
+def display_about():
+    click = False
+    select = True
+
+    while select:
+
+        display.fill((0, 0, 0))  # clear screen
+
+        aboutScreen = pygame.image.load("assets/images/abtBackground.png")
+        screen.blit(aboutScreen, (0, 0))
+
+
+
 # sets the difficulty level of the current game
 def select_difficulty():
     click = False
     select = True
 
     while select:
-        display.fill((224, 132, 132))  # clear screen by filling it with pink
+        display.fill((0, 0, 0))  # clear screen
 
         selectDifficultyScreen = pygame.image.load("assets/images/difficultyFrame.png")
-
         screen.blit(selectDifficultyScreen, (0, 0))
 
 
