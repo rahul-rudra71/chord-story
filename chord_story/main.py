@@ -126,23 +126,28 @@ def select_difficulty():
             hardH_image.get_rect(center=(300, 320)),
         ]
 
+        mousex, mousey = pygame.mouse.get_pos()
+
         screen.blit(easy_image, easyRects[0])
         if easyRects[0].collidepoint((mousex, mousey)):
             screen.blit(easyH_image, easyRects[1])
             if click:  
-                print("EASY")    
+                game.difficulty = 0.5
+                select = False    
         
         screen.blit(med_image, medRects[0])
         if medRects[0].collidepoint((mousex, mousey)):
             screen.blit(medH_image, medRects[1])
             if click:  
-                print("Med")
+                game.difficulty = 0.35
+                select = False
         
         screen.blit(hard_image, hardRects[0])
         if hardRects[0].collidepoint((mousex, mousey)):
             screen.blit(hardH_image, hardRects[1])
             if click:  
-                print("HARD")
+                game.difficulty = 0.25
+                select = False
 
         #font = pygame.font.Font("freesansbold.ttf", 45)
         #text = font.render("CHOOSE THE DIFFICULTY", True, (0, 0, 0))
@@ -152,35 +157,35 @@ def select_difficulty():
         #screen.blit(text, text_rect)
         #screen.blit(text2, text_rect2)
 
-        mousex, mousey = pygame.mouse.get_pos()
 
-        easy_button = pygame.Rect(screen.get_width() / 2 - 72.5, 100, 145, 60)
-        medium_button = pygame.Rect(screen.get_width() / 2 - 72.5, 200, 145, 60)
-        hard_button = pygame.Rect(screen.get_width() / 2 - 72.5, 300, 145, 60)
+
+        # easy_button = pygame.Rect(screen.get_width() / 2 - 72.5, 100, 145, 60)
+        # medium_button = pygame.Rect(screen.get_width() / 2 - 72.5, 200, 145, 60)
+        # hard_button = pygame.Rect(screen.get_width() / 2 - 72.5, 300, 145, 60)
 
         # render buttons
-        pygame.draw.rect(screen, (255, 255, 255), easy_button)
-        pygame.draw.rect(screen, (255, 255, 255), medium_button)
-        pygame.draw.rect(screen, (255, 255, 255), hard_button)
+        # pygame.draw.rect(screen, (255, 255, 255), easy_button)
+        # pygame.draw.rect(screen, (255, 255, 255), medium_button)
+        # pygame.draw.rect(screen, (255, 255, 255), hard_button)
 
-        highlight = (212, 221, 255)
+        # highlight = (212, 221, 255)
 
         # harder difficult = smaller interval between notes
-        if easy_button.collidepoint((mousex, mousey)):
-            pygame.draw.rect(screen, highlight, easy_button)
-            if click:
-                game.difficulty = 0.5
-                select = False
-        if medium_button.collidepoint((mousex, mousey)):
-            pygame.draw.rect(screen, highlight, medium_button)
-            if click:
-                game.difficulty = 0.35
-                select = False
-        if hard_button.collidepoint((mousex, mousey)):
-            pygame.draw.rect(screen, highlight, hard_button)
-            if click:
-                game.difficulty = 0.25
-                select = False
+        # if easy_button.collidepoint((mousex, mousey)):
+        #     pygame.draw.rect(screen, highlight, easy_button)
+        #     if click:
+        #         game.difficulty = 0.5
+        #         select = False
+        # if medium_button.collidepoint((mousex, mousey)):
+        #     pygame.draw.rect(screen, highlight, medium_button)
+        #     if click:
+        #         game.difficulty = 0.35
+        #         select = False
+        # if hard_button.collidepoint((mousex, mousey)):
+        #     pygame.draw.rect(screen, highlight, hard_button)
+        #     if click:
+        #         game.difficulty = 0.25
+        #         select = False
 
         # # easy text
         # font = pygame.font.Font("freesansbold.ttf", 35)
