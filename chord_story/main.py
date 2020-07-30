@@ -572,10 +572,6 @@ def game_won():
 
 # update the lives displayed on screen
 def update_lives():
-    # lives_display = pygame.Rect(20, 370, 55, 25)
-
-    # pygame.draw.rect(screen, (255, 255, 255), lives_display)
-
     lives_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 12)
     lives_font1 = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 14)
     player_lives_str = str(player.lives)
@@ -587,10 +583,6 @@ def update_lives():
 
 # update the score displayed on screen
 def update_score():
-    # score_display = pygame.Rect(80, 370, 100, 25)
-
-    # pygame.draw.rect(screen, (255, 255, 255), score_display)
-
     score_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 12)
     score_font1 = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 14)
     score_str = str(player.score)
@@ -618,7 +610,7 @@ def draw_strings():
     pygame.draw.line(display, (255, 255, 255), (0, 358), (600, 358), 4)  # line 5
     tile_rects.append(pygame.Rect(0, 358, 600, 4))
 
-    # draw the obstacle bar
+    # draw the beat bar
     pygame.draw.line(display, (255, 255, 255), (440, 0), (440, 400), 10)
 
     return tile_rects
@@ -714,7 +706,6 @@ def run_game():
     if filename.endswith(".mp3"):
         os.remove(filename[:-4] + ".wav")
 
-
     # start the timers for game events and spawning
     pygame.time.set_timer(game.events["SCOREUP"], 1000)  # update the score every second
     pygame.time.set_timer(game.events["SPAWNLIFE"], 60000)  # spawn a extra life every minute
@@ -726,7 +717,7 @@ def run_game():
     pygame.time.set_timer(game.events["SPAWNBONUS"], bonus_time * 1000)
 
     # update the sprite for animation
-    pygame.timer.set_timer(game.events["UPDATESPRITE"], 500)
+    pygame.timer.set_timer(game.events["UPDATESPRITE"], 750)
 
     game.background_rect = game.background.get_rect()
 
@@ -860,19 +851,19 @@ def run_game():
                     player.sprite_group.update()
 
                 # spawn a bonus
-                if event.type == game.events["SPAWNPHASER"]:
+                if event.type == game.events["SPAWNBONUS"]:
 
                     # spawn of 3 types of bonuses worth different amounts of points
                     num = random.randint(1, 3)
 
                     if num == 1: # worth 100 points
-                        bonus = Powerup("bonus1", (255, 211, 51))
+                        bonus = Powerup("bonus1", color=(255, 211, 51))
                         game.powerups.append(bonus)
                     elif num == 2: # worth 250 points
-                        bonus = Powerup("bonus2", (54, 255, 198))
+                        bonus = Powerup("bonus2", color=(54, 255, 198))
                         game.powerups.append(bonus)
                     elif num == 3: # worth 500 points
-                        bonus = Powerup("bonus3", (255, 74, 210))
+                        bonus = Powerup("bonus3", color=(255, 74, 210))
                         game.powerups.append(bonus)
 
                     # set the spawn time for the next bonus
