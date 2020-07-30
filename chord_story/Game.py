@@ -5,6 +5,7 @@ from pygame.locals import *
 class Game:
     def __init__(self):
         self._background = pygame.image.load("assets/images/spec.png")
+        self._background_rect = self._background.get_rect()
         self._difficulty = 0.25
         self._state = "running"
         self._obstacles = []
@@ -18,12 +19,25 @@ class Game:
             "PHASERTIMER": USEREVENT + 5,
             "STARTMUSIC": USEREVENT + 6,
             "RECOVER": USEREVENT + 7,
-            "COUNTDOWN": USEREVENT + 8
+            "COUNTDOWN": USEREVENT + 8,
+            "GAMEWON": USEREVENT + 9
         }
 
     @property
     def background(self):
         return self._background
+
+    @background.setter
+    def background(self, background):
+        self._background = background
+
+    @property
+    def background_rect(self):
+        return self._background_rect
+
+    @background_rect.setter
+    def background_rect(self, background_rect):
+        self._background_rect = background_rect
 
     @property
     def difficulty(self):
