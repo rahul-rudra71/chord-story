@@ -392,8 +392,8 @@ def restarting():
 def damaged_sprite():
     images = []
 
-    images.append(pygame.image.load("assets/images/player_damaged1.png").convert())
-    images.append(pygame.image.load("assets/images/player_damaged2.png").convert())
+    images.append(pygame.image.load("assets/images/sprites/player_damaged1.png").convert())
+    images.append(pygame.image.load("assets/images/sprites/player_damaged2.png").convert())
 
     player.sprite.images = images
     player.sprite_group = pygame.sprite.Group(player.sprite)
@@ -403,8 +403,8 @@ def damaged_sprite():
 def invincible_sprite():
     images = []
 
-    images.append(pygame.image.load("assets/images/player_invincible1.png").convert())
-    images.append(pygame.image.load("assets/images/player_invincible2.png").convert())
+    images.append(pygame.image.load("assets/images/sprites/player_invincible1.png").convert())
+    images.append(pygame.image.load("assets/images/sprites/player_invincible2.png").convert())
 
     player.sprite.images = images
     player.sprite_group = pygame.sprite.Group(player.sprite)
@@ -414,8 +414,8 @@ def invincible_sprite():
 def normal_sprite():
     images = []
 
-    images.append(pygame.image.load("assets/images/player1.png").convert())
-    images.append(pygame.image.load("assets/images/player2.png").convert())
+    images.append(pygame.image.load("assets/images/sprites/player1.png").convert())
+    images.append(pygame.image.load("assets/images/sprites/player2.png").convert())
 
     player.sprite.images = images
     player.sprite_group = pygame.sprite.Group(player.sprite)

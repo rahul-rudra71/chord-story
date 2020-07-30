@@ -6,8 +6,8 @@ class PlayerSprite(pygame.sprite.Sprite):
         # create image array
         self._images = []
         
-        self._images.append(pygame.image.load("assets/images/player1.png").convert())
-        self._images.append(pygame.image.load("assets/images/player2.png").convert())
+        self._images.append(pygame.image.load("assets/images/sprites/player1.png").convert())
+        self._images.append(pygame.image.load("assets/images/sprites/player2.png").convert())
 
         # index to get image
         self._index = 0
