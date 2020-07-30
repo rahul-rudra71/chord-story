@@ -16,11 +16,12 @@ class Game:
             "SCOREUP": USEREVENT + 2,
             "SPAWNLIFE": USEREVENT + 3,
             "SPAWNPHASER": USEREVENT + 4,
-            "PHASERTIMER": USEREVENT + 5,
-            "STARTMUSIC": USEREVENT + 6,
-            "RECOVER": USEREVENT + 7,
-            "COUNTDOWN": USEREVENT + 8,
-            "UPDATESPRITE": USEREVENT + 9
+            "SPAWNBONUS": USEREVERT + 5,
+            "PHASERTIMER": USEREVENT + 6,
+            "STARTMUSIC": USEREVENT + 7,
+            "RECOVER": USEREVENT + 8,
+            "COUNTDOWN": USEREVENT + 9,
+            "UPDATESPRITE": USEREVENT + 10
         }
 
     @property

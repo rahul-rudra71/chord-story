@@ -503,6 +503,23 @@ def powerup_collision(player_rect, powerups):
                 player.sprite_group.update()
                 pygame.time.set_timer(game.events["PHASERTIMER"], 5000, True) # 5s of invulnerability
 
+            # gain 100 points
+            if powerup.type == "bonus1":
+                # TODO: add bonus sound effect
+                player.score += 100
+                player.total_score += 100
+
+            # gain 250 points
+            if powerup.type == "bonus2":
+                # TODO: add bonus sound effect
+                player.score += 250
+                player.total_score += 250
+
+            if powerup.type == "bonus3":
+                # TODO: add bonus sound effect
+                player.score += 500
+                player.total_score += 500
+
             powerups.remove(powerup)
 
         # remove once off screen
@@ -641,8 +658,23 @@ def draw_game_objects():
 
     for powerup in game.powerups:
         if game.state == "running":
-            powerup.rect.x -= 4
-        display.blit(powerup.img, (powerup.rect.x, powerup.rect.y))
+            # bonus obstacles move at different speeds depending on their worth
+            if powerup.type == "bonus1":
+                powerup.rect.x -= 3
+            elif powerup.type == "bonus2":
+                powerup.rect.x -= 6
+            elif powerup.type == "bonus3":
+                powerup.rect.x -= 10
+            else:  # other powerups move at a set speed
+                powerup.rect.x -= 4
+
+        # displays the image for the special powerups        
+        if powerup.img != None:
+            display.blit(powerup.img, (powerup.rect.x, powerup.rect.y))
+
+        # draw a circle for the bonuses
+        else:
+            pygame.draw.ellipse(display, powerup.color, powerup.rect)
 
 
 # main game function with loop
@@ -689,6 +721,9 @@ def run_game():
 
     phaser_time = random.randint(30, 90) # spawn a phasing ability every 30 - 90 seconds
     pygame.time.set_timer(game.events["SPAWNPHASER"], phaser_time * 1000)
+
+    bonus_time = random.randint(15, 45) # spawn a bonus every 15 - 45 seconds
+    pygame.time.set_timer(game.events["SPAWNBONUS"], bonus_time * 1000)
 
     # update the sprite for animation
     pygame.timer.set_timer(game.events["UPDATESPRITE"], 500)
@@ -823,6 +858,26 @@ def run_game():
                     effect.play()
                     normal_sprite()
                     player.sprite_group.update()
+
+                # spawn a bonus
+                if event.type == game.events["SPAWNPHASER"]:
+
+                    # spawn of 3 types of bonuses worth different amounts of points
+                    num = random.randint(1, 3)
+
+                    if num == 1: # worth 100 points
+                        bonus = Powerup("bonus1", (255, 211, 51))
+                        game.powerups.append(bonus)
+                    elif num == 2: # worth 250 points
+                        bonus = Powerup("bonus2", (54, 255, 198))
+                        game.powerups.append(bonus)
+                    elif num == 3: # worth 500 points
+                        bonus = Powerup("bonus3", (255, 74, 210))
+                        game.powerups.append(bonus)
+
+                    # set the spawn time for the next bonus
+                    bonus_time = random.randint(15, 45) # spawn a bonus every 15 - 45 seconds
+                    pygame.time.set_timer(game.events["SPAWNBONUS"], bonus_time * 1000)
 
                 # players gets 2s of recover time after losing a life or unpausing the game
                 if event.type == game.events["RECOVER"]:

@@ -3,7 +3,7 @@ import pygame
 
 
 class Powerup:
-    def __init__(self, type, img, color=(255, 255, 255)):
+    def __init__(self, type, img=None, color=(255, 255, 255)):
 
         # generate a random number 0-5 to pick a string for the obstacle to spawn
         num = random.randint(0, 5)
