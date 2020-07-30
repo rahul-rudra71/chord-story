@@ -1,5 +1,6 @@
 .git/
 .idea/
+.vscode/
 chord_story/__pycache__/
 assets/images/player1_invincible.psd
 venv/
