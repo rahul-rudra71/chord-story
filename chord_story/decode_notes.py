@@ -152,12 +152,11 @@ def decode(note_offset):
     root.destroy()
 
     clip, sample = librosa.load(filename)
-
+    #librosa is removing the first note in some files.
     onset_frames = librosa.onset.onset_detect(y=clip, sr=sample)
 
     # Get frequency levels against frame values
     ps, mags = librosa.core.piptrack(y=clip, sr=sample)
-
     # Get time values against onsets
     timestamps = librosa.frames_to_time(onset_frames, sr=sample)
 
@@ -168,11 +167,10 @@ def decode(note_offset):
     x = 0
     previous_str = ''
     previous_nt = ''
-    keyout = {}
-    timeout = {}
+    noteList = []
     while x < len(trimmed_onset):
+        single_note = []
         pitch_start, time_end = detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[x])
-        timeout[trimmed_times[x]] = round(librosa.frames_to_time(time_end, sr=sample), 2)
 
         if pitch_start != 0.0:
             note = librosa.core.hz_to_note(pitch_start)
@@ -208,10 +206,14 @@ def decode(note_offset):
                 note = note[:-1] + '5'
             temp_assign = assign_string(note, previous_str, previous_nt)
 
-        keyout[trimmed_times[x]] = temp_assign
+        #keyout[trimmed_times[x]] = temp_assign
+        single_note.append(trimmed_times[x])
+        single_note.append(temp_assign)
+        single_note.append(round(librosa.frames_to_time(time_end, sr=sample), 2))
+        noteList.append(single_note)
         previous_str = temp_assign
         previous_nt = note
 
         x = x + 1
     # Output dictionary of times and string assignments
-    return [keyout, filename, timeout]
+    return noteList, filename

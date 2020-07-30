@@ -1,4 +1,4 @@
-import sys, os, random
+import sys, os, random, time
 import pygame
 from pygame.locals import *
 from pygame import mixer
@@ -211,7 +211,7 @@ def countdown(seconds):
 # open the pause screen
 def paused():
     click = False
-
+    pause_time = time.time()
     pygame.mixer.music.pause()
 
     while game.state == "paused":
@@ -241,7 +241,7 @@ def paused():
             if click:
                 game.state = "resuming"
                 unpause()
-                return
+                return time.time() - pause_time
         if quit_button.collidepoint((mousex, mousey)):
             pygame.draw.rect(screen, highlight, quit_button)
             if click:
@@ -592,19 +592,11 @@ def draw_game_objects():
         display.blit(powerup.img, (powerup.rect.x, powerup.rect.y))
 
 
-# start playing the music
-def start_music():
-    # set the delay to start the music so the beats line up
-    if game.difficulty == 0.5:  # easy mode
-        pygame.time.set_timer(game.events["STARTMUSIC"], 1250, True)
-    if game.difficulty == 0.35:  # medium mode
-        pygame.time.set_timer(game.events["STARTMUSIC"], 625, True)
-    if game.difficulty == 0.25:  # hard mode
-        pygame.time.set_timer(game.events["STARTMUSIC"], 312, True)
 
 
 # main game function with loop
 def run_game():
+    copyDecode = []
     game.state = "running"
 
     # initialize movement
@@ -618,11 +610,12 @@ def run_game():
     game.powerups.clear()
 
     # process the audio file
-    decode = dn.decode(game.difficulty)
+    decode, filename = dn.decode(game.difficulty)
+    copyDecode = decode.copy()
     # if mp3 selected, convert to a temporary wav for pygame mixer compatibility
-    if decode[1].endswith(".mp3"):
-        sound = AudioSegment.from_mp3(decode[1])
-        sound.export(decode[1][:-4] + ".wav", format="wav")
+    if filename.endswith(".mp3"):
+        sound = AudioSegment.from_mp3(filename)
+        sound.export(filename[:-4] + ".wav", format="wav")
 
     #get speed of rects
     if game.difficulty == 0.5:  # easy mode
@@ -633,42 +626,30 @@ def run_game():
         speed = 8
 
     # load the notes and music
-    notes = decode[0]
-    times = decode[2]
-    mixer.music.load(decode[1][:-4] + ".wav")
-    noteKeys = list(notes.keys())
-    timeKeys = list(times.keys())
-
+    mixer.music.load(filename[:-4] + ".wav")
     # deleted the temporary wav file
-    if decode[1].endswith(".mp3"):
-        os.remove(decode[1][:-4] + ".wav")
-
-    # get the first note/obstacle and the first note length
-    noteTime = noteKeys[0]
-    stringNo = notes[noteTime]
-    timeStart = timeKeys[0]
-    timeEnd = times[timeStart]
+    if filename.endswith(".mp3"):
+        os.remove(filename[:-4] + ".wav")
 
 
     # start the timers for game events and spawning
-    pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
+    #pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
     pygame.time.set_timer(game.events["SCOREUP"], 1000)  # update the score every second
     pygame.time.set_timer(game.events["SPAWNLIFE"], 60000)  # spawn a extra life ~3 times per song
 
     phaser_time = random.randint(30, 90) # spawn a phasing ability every 30 - 90 seconds
     pygame.time.set_timer(game.events["SPAWNPHASER"], phaser_time * 1000)
 
-    # TODO: add bonus point obstacles
-
-    keyIndex = 0
-
-    start_music()
+    #start_music()
 
     game.background_rect = game.background.get_rect()
     player.img.set_colorkey((255, 255, 255))
 
     won = False
 
+    startGameTime = time.time()
+    endGameTime = decode[len(decode) - 1][2]
+    mixer.music.play()
     while game.state == "running":
         display.fill((255, 255, 255))  # clear screen by filling it with white
 
@@ -681,11 +662,28 @@ def run_game():
         # move obstacles and other objects across screen
         draw_game_objects()
 
-        player_movement = [0, 0]
+        #get and display notes
+        timeCheck = round((float(time.time()) - float(startGameTime)), 2)
+        #the math is an offset so the bar is on beat
+        #offset is: seconds = units * frame/units * secs/frame
+        #here it's seconds = 160 * 1/speed * 1/120
+        if decode:
+          if timeCheck > decode[0][0] - (1.3333333 * (1/speed)):
+                stringNo = decode[0][1]
+                noteLength = decode[0][2] - (timeCheck + (1.3333333 * (1/speed)))
+                if(noteLength <= 0.125):
+                  noteLength = 0.125
+                if(noteLength >= 3):
+                  noteLength = 12 * game.difficulty
+                if(stringNo != ''):
+                    obstacle = Obstacle(stringNo, round(120 * speed * noteLength))
+                    game.obstacles.append(obstacle)
+                decode.pop(0)
 
+        player_movement = [0, 0]
         # move player
         if game.state == "running":
-            # TODO: change player facing direction depending on moving direction
+            # TODO: change player facing direction depemixer.music.play()nding on moving direction
             if moving_right == True:
                 player_movement[0] += 4
             if moving_left == True:
@@ -706,6 +704,14 @@ def run_game():
 
         powerup_collision(player.rect, game.powerups)
 
+        #delay 1 second if game wib
+        if round((float(time.time()) - float(startGameTime)), 2) >= float(endGameTime + 1):
+          effect = pygame.mixer.Sound('assets/sounds/win.wav')
+          effect.play()
+          game.state = "won"
+
+
+
         for event in pygame.event.get():  # event loop
 
             # quit on x clicked
@@ -719,8 +725,8 @@ def run_game():
                 if event.type == KEYDOWN:
                     if event.key == pygame.K_p:
                         game.state = "paused"
-                        paused()
-                        pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteDiffTime * 1000), True)
+                        pauseElapse = paused()
+                        startGameTime += pauseElapse
                     if event.key == K_RIGHT:
                         moving_right = True
                     if event.key == K_LEFT:
@@ -741,38 +747,6 @@ def run_game():
                         moving_right = False
                     if event.key == K_LEFT:
                         moving_left = False
-
-                # spawn a new obstacle
-                if event.type == game.events["NEWOBSTACLE"]:
-                    #240 = framerate * unit/frame
-                    noteLength = timeEnd - timeStart
-                    if(noteLength <= 0.125):
-                      noteLength = 0.125
-                    if(noteLength >= 3):
-                      noteLength = 12 * game.difficulty
-                    if(stringNo != ''):
-                        obstacle = Obstacle(stringNo, round(120 * speed * noteLength))
-                        game.obstacles.append(obstacle)
-
-                    # if end of song, win
-                    if keyIndex >= len(noteKeys) - 1:
-                        # set a delay before displaying the win screen
-                        if not won:
-                            pygame.time.set_timer(game.events["GAMEWON"], 2000, True)
-                            won = True # so the timer is only set once
-                        break
-
-                    else:
-                        keyIndex = keyIndex + 1
-                        noteTime = noteKeys[keyIndex]
-                        timeStart = timeKeys[keyIndex]
-
-                        noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
-                        stringNo = notes[noteTime]
-                        timeEnd = times[timeStart]
-
-                        # set the timer to spawn the next obstacle
-                        pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteDiffTime * 1000), True)
 
                 # increase the score every second; higher difficulty = greater increment
                 if event.type == game.events["SCOREUP"]:
@@ -803,19 +777,9 @@ def run_game():
                     player.img = pygame.image.load("assets/images/player1.png").convert()
                     player.img.set_colorkey((255, 255, 255))
 
-                # start the music with a delay so the obstacles line up with the bar
-                if event.type == game.events["STARTMUSIC"]:
-                    mixer.music.play()
-
                 # players gets 2s of recover time after losing a life or unpausing the game
                 if event.type == game.events["RECOVER"]:
                     player.powerup = None
-
-                # game won, display the win screen
-                if event.type == game.events["GAMEWON"]:
-                    effect = pygame.mixer.Sound('assets/sounds/win.wav')
-                    effect.play()
-                    game.state = "won"
 
         display.blit(player.img, (player.rect.x, player.rect.y))
 
@@ -830,16 +794,9 @@ def run_game():
             game_over()
             game.state = "restarting"
             restarting()
-
-            noteTime = noteKeys[0]
-            stringNo = notes[noteTime]
-            timeStart = timeKeys[0]
-            timeEnd = times[timeStart]
-            keyIndex = 0
-
-            pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
-
-            start_music()
+            decode = copyDecode.copy()
+            startGameTime = time.time()
+            mixer.music.play()
 
         # win - show game win screen; start new level or quit
         if game.state == "won":
@@ -848,16 +805,9 @@ def run_game():
             restarting()
             game.obstacles.clear()
             game.powerups.clear()
-
-            noteTime = noteKeys[0]
-            stringNo = notes[noteTime]
-            timeStart = timeKeys[0]
-            timeEnd = times[timeStart]
-            keyIndex = 0
-
-            pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
-
-            start_music()
+            decode = copyDecode.copy()
+            startGameTime = time.time()
+            mixer.music.play()
 
         pygame.display.update()
         clock.tick(120)

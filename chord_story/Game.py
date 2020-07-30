@@ -19,8 +19,7 @@ class Game:
             "PHASERTIMER": USEREVENT + 5,
             "STARTMUSIC": USEREVENT + 6,
             "RECOVER": USEREVENT + 7,
-            "COUNTDOWN": USEREVENT + 8,
-            "GAMEWON": USEREVENT + 9
+            "COUNTDOWN": USEREVENT + 8
         }
 
     @property
