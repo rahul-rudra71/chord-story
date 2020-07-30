@@ -620,7 +620,6 @@ def run_game():
 
     # process the audio file
     decode = dn.decode(game.difficulty)
-
     # if mp3 selected, convert to a temporary wav for pygame mixer compatibility
     if decode[1].endswith(".mp3"):
         sound = AudioSegment.from_mp3(decode[1])
