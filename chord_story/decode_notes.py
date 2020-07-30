@@ -187,6 +187,8 @@ def decode(note_offset):
                 prev_oct = int(previous_nt[len(previous_nt) - 1])
                 if prev_oct != 2:
                     note = note[:-1] + str(prev_oct - 1)
+                else:
+                    note = note[:-1] + '2'
             else:
                 note = note[:-1] + '2'
             temp_assign = assign_string(note, previous_str, previous_nt)
@@ -200,6 +202,8 @@ def decode(note_offset):
                 prev_oct = int(previous_nt[len(previous_nt) - 1])
                 if prev_oct != 5:
                     note = note[:-1] + str(prev_oct + 1)
+                else:
+                    note = note[:-1] + '5'
             else:
                 note = note[:-1] + '5'
             temp_assign = assign_string(note, previous_str, previous_nt)
