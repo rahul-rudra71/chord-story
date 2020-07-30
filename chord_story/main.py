@@ -97,7 +97,7 @@ def display_about():
         display.fill((0, 0, 0))  # clear screen
         aboutScreen = pygame.image.load("assets/images/abtBackground.png")
         screen.blit(aboutScreen, (0, 0))
-    
+
         # create the back button
 
         back_image = pygame.image.load("assets/images/buttons/back.png")
@@ -113,7 +113,7 @@ def display_about():
         screen.blit(back_image, backRects[0])
         if backRects[0].collidepoint((mousex, mousey)):
             screen.blit(backH_image, backRects[1])
-            if click:  
+            if click:
                 aboutMenuOpen = False
                 main_menu()
 
@@ -171,21 +171,21 @@ def select_difficulty():
         screen.blit(easy_image, easyRects[0])
         if easyRects[0].collidepoint((mousex, mousey)):
             screen.blit(easyH_image, easyRects[1])
-            if click:  
+            if click:
                 game.difficulty = 0.5
-                select = False    
-        
+                select = False
+
         screen.blit(med_image, medRects[0])
         if medRects[0].collidepoint((mousex, mousey)):
             screen.blit(medH_image, medRects[1])
-            if click:  
+            if click:
                 game.difficulty = 0.35
                 select = False
-        
+
         screen.blit(hard_image, hardRects[0])
         if hardRects[0].collidepoint((mousex, mousey)):
             screen.blit(hardH_image, hardRects[1])
-            if click:  
+            if click:
                 game.difficulty = 0.25
                 select = False
 
@@ -625,18 +625,31 @@ def run_game():
         sound = AudioSegment.from_mp3(decode[1])
         sound.export(decode[1][:-4] + ".wav", format="wav")
 
+    #get speed of rects
+    if game.difficulty == 0.5:  # easy mode
+        speed = 2
+    elif game.difficulty == 0.35:  # medium mode
+        speed = 4
+    elif game.difficulty == 0.25:  # hard mode
+        speed = 8
+
     # load the notes and music
     notes = decode[0]
+    times = decode[2]
     mixer.music.load(decode[1][:-4] + ".wav")
     noteKeys = list(notes.keys())
+    timeKeys = list(times.keys())
 
     # deleted the temporary wav file
     if decode[1].endswith(".mp3"):
         os.remove(decode[1][:-4] + ".wav")
 
-    # get the first note/obstacle
+    # get the first note/obstacle and the first note length
     noteTime = noteKeys[0]
     stringNo = notes[noteTime]
+    timeStart = timeKeys[0]
+    timeEnd = times[timeStart]
+
 
     # start the timers for game events and spawning
     pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
@@ -732,8 +745,14 @@ def run_game():
 
                 # spawn a new obstacle
                 if event.type == game.events["NEWOBSTACLE"]:
-                    if (stringNo != ''):
-                        obstacle = Obstacle(stringNo)
+                    #240 = framerate * unit/frame
+                    noteLength = timeEnd - timeStart
+                    if(noteLength <= 0.125):
+                      noteLength = 0.125
+                    if(noteLength >= 3):
+                      noteLength = 12 * game.difficulty
+                    if(stringNo != ''):
+                        obstacle = Obstacle(stringNo, round(120 * speed * noteLength))
                         game.obstacles.append(obstacle)
 
                     keyIndex = keyIndex + 1
@@ -746,8 +765,11 @@ def run_game():
                         break
 
                     noteTime = noteKeys[keyIndex]
+                    timeStart = timeKeys[keyIndex]
+
                     noteDiffTime = noteKeys[keyIndex] - noteKeys[keyIndex - 1]
                     stringNo = notes[noteTime]
+                    timeEnd = times[timeStart]
 
                     # set the timer to spawn the next obstacle
                     pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteDiffTime * 1000), True)
@@ -806,6 +828,8 @@ def run_game():
 
             noteTime = noteKeys[0]
             stringNo = notes[noteTime]
+            timeStart = timeKeys[0]
+            timeEnd = times[timeStart]
             keyIndex = 0
 
             pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)
@@ -822,6 +846,8 @@ def run_game():
 
             noteTime = noteKeys[0]
             stringNo = notes[noteTime]
+            timeStart = timeKeys[0]
+            timeEnd = times[timeStart]
             keyIndex = 0
 
             pygame.time.set_timer(game.events["NEWOBSTACLE"], int(noteTime * 1000), True)

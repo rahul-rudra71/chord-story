@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
 import random
+import math
 from tkinter import filedialog
 from tkinter import *
 
@@ -8,8 +9,18 @@ from tkinter import *
 def detect_pitch(magnitudes, pitches, t):
     index = magnitudes[:, t].argmax()
     pitch = pitches[index, t]
-
-    return pitch
+    #gets the last time for which a pitch has roughly the same frequency
+    #adjust this for sensitivity on note detection for lengths
+    # while(math.isclose(pitches[index, t], pitches[index, t+1], abs_tol=10**1)):
+    #   t += 1
+    #   if(t == pitches.shape[1] - 1):
+    #     return pitch, t
+    # return pitch, t
+    while(math.isclose(pitches[index, t], pitches[index, t+1], abs_tol=10**1)):
+      t += 1
+      if(t == magnitudes.shape[1] - 1):
+        return pitch, t
+    return pitch, t
 
 
 def trim_onsets(onsets, times, offset):
@@ -128,7 +139,7 @@ def assign_string(nt, prev_str, prev_nt):
                     out = random.choice(possible)
             else:
                 out = random.choice(possible)
-                
+
     return out
 
 
@@ -158,8 +169,10 @@ def decode(note_offset):
     previous_str = ''
     previous_nt = ''
     keyout = {}
+    timeout = {}
     while x < len(trimmed_onset):
-        pitch_start = detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[x])
+        pitch_start, time_end = detect_pitch(magnitudes=mags, pitches=ps, t=trimmed_onset[x])
+        timeout[trimmed_times[x]] = round(librosa.frames_to_time(time_end, sr=sample), 2)
 
         if pitch_start != 0.0:
             note = librosa.core.hz_to_note(pitch_start)
@@ -197,4 +210,4 @@ def decode(note_offset):
 
         x = x + 1
     # Output dictionary of times and string assignments
-    return [keyout, filename]
+    return [keyout, filename, timeout]

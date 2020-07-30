@@ -2,22 +2,22 @@ import pygame
 
 
 class Obstacle:
-    def __init__(self, stringNo):
+    def __init__(self, stringNo, length):
 
         num = int(stringNo)
 
         if num == 5:
-            self._rect = pygame.Rect((600, 27, 30, 30))
+            self._rect = pygame.Rect((600, 27, length, 30))
         if num == 4:
-            self._rect = pygame.Rect((600, 87, 30, 30))
+            self._rect = pygame.Rect((600, 87, length, 30))
         if num == 3:
-            self._rect = pygame.Rect((600, 147, 30, 30))
+            self._rect = pygame.Rect((600, 147, length, 30))
         if num == 2:
-            self._rect = pygame.Rect((600, 207, 30, 30))
+            self._rect = pygame.Rect((600, 207, length, 30))
         if num == 1:
-            self._rect = pygame.Rect((600, 267, 30, 30))
+            self._rect = pygame.Rect((600, 267, length, 30))
         if num == 0:
-            self._rect = pygame.Rect((600, 327, 30, 30))
+            self._rect = pygame.Rect((600, 327, length, 30))
 
         self._color = (255, 255, 255)
         self._stringNum = num
