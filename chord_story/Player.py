@@ -1,6 +1,7 @@
 import pygame
 from chord_story.PlayerSprite import PlayerSprite
 
+
 class Player:
     def __init__(self):
         self._sprite = PlayerSprite()

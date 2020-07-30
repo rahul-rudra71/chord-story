@@ -16,7 +16,7 @@ class Game:
             "SCOREUP": USEREVENT + 2,
             "SPAWNLIFE": USEREVENT + 3,
             "SPAWNPHASER": USEREVENT + 4,
-            "SPAWNBONUS": USEREVERT + 5,
+            "SPAWNBONUS": USEREVENT + 5,
             "PHASERTIMER": USEREVENT + 6,
             "STARTMUSIC": USEREVENT + 7,
             "RECOVER": USEREVENT + 8,

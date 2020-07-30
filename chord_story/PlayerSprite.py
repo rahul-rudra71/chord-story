@@ -1,3 +1,6 @@
+import pygame
+
+
 class PlayerSprite(pygame.sprite.Sprite):
 
     def __init__(self):
@@ -5,7 +8,7 @@ class PlayerSprite(pygame.sprite.Sprite):
 
         # create image array
         self._images = []
-        
+
         self._images.append(pygame.image.load("assets/images/sprites/player1.png").convert())
         self._images.append(pygame.image.load("assets/images/sprites/player2.png").convert())
 
@@ -18,7 +21,6 @@ class PlayerSprite(pygame.sprite.Sprite):
 
         # initial player rect
         self._rect = pygame.Rect(215, 200, 30, 36)
-
 
     def update(self):
         # reset index when reach end

@@ -17,8 +17,7 @@ mixer.init()
 pygame.display.set_caption("Chord Story")
 WINDOW_SIZE = (600, 400)
 screen = pygame.display.set_mode(WINDOW_SIZE, 0, 32)  # initiate the window
-display = pygame.Surface((600, 400)) # surface for rendering
-player_display = pygame.Surface((600, 400)) # surface for rendering the player
+display = pygame.Surface((600, 400))  # surface for rendering
 
 # initialize game and player
 game = Game()
@@ -51,7 +50,7 @@ def main_menu():
         if playRects[0].collidepoint((mousex, mousey)):
             screen.blit(playH_image, playRects[1])
             if click:
-                #play the game if the button is pressed
+                # play the game if the button is pressed
                 select_difficulty()
                 run_game()
 
@@ -137,7 +136,6 @@ def select_difficulty():
         selectDifficultyScreen = pygame.image.load("assets/images/difficultyFrame.png")
         screen.blit(selectDifficultyScreen, (0, 0))
 
-
         # creates the easy medium and hard buttons on the select difficulty screen
         easy_image = pygame.image.load("assets/images/buttons/easy.png")
         easyH_image = pygame.image.load("assets/images/buttons/easyH.png")
@@ -186,7 +184,6 @@ def select_difficulty():
                 game.difficulty = 0.25
                 select = False
 
-
         for event in pygame.event.get():  # event loop
             if event.type == QUIT:
                 pygame.quit()
@@ -224,14 +221,16 @@ def paused():
         quit_button = pygame.Rect(40, 340, 95, 50)
 
         # pause message on the screen
-        pause_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 80)
+        pause_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 100)
         pause_text = pause_font.render("PAUSE", True, (255, 0, 0))
-        pause_font1 = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 84)
-        pause_text1 = pause_font1.render("PAUSE", True, (255, 255, 255)) # second layer of text for a border
+        pause_text1 = pause_font.render("PAUSE", True, (255, 255, 255))
         text_rect = pause_text.get_rect(
             center=(screen.get_width() / 2, screen.get_height() / 2)
         )
-        screen.blit(pause_text1, text_rect)
+        text_rect1 = pause_text.get_rect(
+            center=(screen.get_width() / 2 - 4, screen.get_height() / 2 - 2)
+        )
+        screen.blit(pause_text1, text_rect1)
         screen.blit(pause_text, text_rect)
 
         # render buttons
@@ -258,11 +257,11 @@ def paused():
                 game.state = "running"
                 main_menu()
 
-        button_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 17)
+        button_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 18)
         continue_text = button_font.render("CONTINUE", True, (255, 255, 255))
         quit_text = button_font.render("QUIT", True, (255, 255, 255))
-        screen.blit(continue_text, (472, 355))
-        screen.blit(quit_text, (65, 355))
+        screen.blit(continue_text, (477, 355))
+        screen.blit(quit_text, (66, 355))
 
         click = False
 
@@ -281,7 +280,6 @@ def paused():
 
 # unpause the game
 def unpause():
-
     # set the inital timer to 3 seconds
     game.counter = 3
     pygame.time.set_timer(game.events["COUNTDOWN"], 1000)
@@ -295,7 +293,7 @@ def unpause():
         draw_background()
         draw_strings()
         draw_game_objects()
-        player.sprite_group.draw(player_display)
+        player.sprite_group.draw(display)
         screen.blit(display, (0, 0))
 
         # display the lives and score
@@ -367,11 +365,11 @@ def restarting():
                 game.powerups.clear()
                 main_menu()
 
-        button_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 17)
+        button_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 18)
         restart_text = button_font.render("RESTART", True, (255, 255, 255))
         quit_text = button_font.render("QUIT", True, (255, 255, 255))
-        screen.blit(restart_text, (480, 355))
-        screen.blit(quit_text, (65, 355))
+        screen.blit(restart_text, (484, 355))
+        screen.blit(quit_text, (66, 355))
 
         click = False
 
@@ -459,7 +457,6 @@ def obstacle_collision(player_rect, obstacles):
     for obstacle in obstacles:
         # player loses a life; obstacle hit disappears and the player gets 2s of recovery time
         if player_rect.colliderect(obstacle):
-            # TODO: make a version of player sprite with red filter
             damaged_sprite()
             player.sprite_group.update()
             effect = pygame.mixer.Sound('assets/sounds/damage.wav')
@@ -498,10 +495,9 @@ def powerup_collision(player_rect, powerups):
                 player.powerup = "phaser"
                 effect = pygame.mixer.Sound('assets/sounds/powerup.wav')
                 effect.play()
-                # TODO make invincible version of player sprite
                 invincible_sprite()
                 player.sprite_group.update()
-                pygame.time.set_timer(game.events["PHASERTIMER"], 5000, True) # 5s of invulnerability
+                pygame.time.set_timer(game.events["PHASERTIMER"], 5000, True)  # 5s of invulnerability
 
             # gain 100 points
             if powerup.type == "bonus1":
@@ -547,49 +543,49 @@ def set_obstacle_color(obstacle):
 # display the game over screen
 def game_over():
     mixer.music.stop()
-    font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 80)
+    font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 100)
     text = font.render("GAME OVER", True, (255, 0, 0))
-    font1 = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 84)
-    text1 = font1.render("GAME OVER", True, (255, 0, 0))
+    text1 = font.render("GAME OVER", True, (255, 255, 255))
     text_rect = text.get_rect(
         center=(screen.get_width() / 2, screen.get_height() / 2))
-    screen.blit(text1, text_rect)
+    text_rect1 = text.get_rect(
+        center=((screen.get_width() / 2) - 4, (screen.get_height() / 2) - 2))
+    screen.blit(text1, text_rect1)
     screen.blit(text, text_rect)
 
 
 # display the game won screen
 def game_won():
-    font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 80)
+    font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 100)
     text = font.render("YOU WIN", True, (0, 255, 0))
-    font1 = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 84)
-    text1 = font1.render("YOU WIN", True, (0, 255, 0))
+    text1 = font.render("YOU WIN", True, (255, 255, 255))
     text_rect = text.get_rect(
         center=(screen.get_width() / 2, screen.get_height() / 2))
-    screen.blit(text1, text_rect)
+    text_rect1 = text.get_rect(
+        center=((screen.get_width() / 2) - 4, (screen.get_height() / 2) - 2))
+    screen.blit(text1, text_rect1)
     screen.blit(text, text_rect)
     mixer.music.stop()
 
 
 # update the lives displayed on screen
 def update_lives():
-    lives_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 12)
-    lives_font1 = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 14)
+    lives_font = pygame.font.Font("assets/fonts/04B_30__.ttf", 20)
     player_lives_str = str(player.lives)
-    lives_text = lives_font.render("LIVES: " + player_lives_str, True, (255, 255, 255))
-    lives_text1 = lives_font1.render("LIVES: " + player_lives_str, True, (0, 255, 255))
-    screen.blit(lives_text1, (21, 374))
+    lives_text = lives_font.render("LIVES:" + player_lives_str, True, (255, 255, 255))
+    lives_text1 = lives_font.render("LIVES:" + player_lives_str, True, (0, 255, 255))
+    screen.blit(lives_text1, (24, 376))
     screen.blit(lives_text, (22, 375))
 
 
 # update the score displayed on screen
 def update_score():
-    score_font = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 12)
-    score_font1 = pygame.font.Font("assets/fonts/ARCADECLASSIC.ttf", 14)
+    score_font = pygame.font.Font("assets/fonts/04B_30__.ttf", 20)
     score_str = str(player.score)
-    score_text = score_font.render("SCORE: " + score_str, True, (255, 255, 255))
-    score_text1 = score_font.render("SCORE: " + score_str, True, (0, 255, 255))
-    screen.blit(score_text1, (81, 374))
-    screen.blit(score_text, (82, 375))
+    score_text = score_font.render("SCORE:" + score_str, True, (255, 255, 255))
+    score_text1 = score_font.render("SCORE:" + score_str, True, (0, 255, 255))
+    screen.blit(score_text1, (160, 376))
+    screen.blit(score_text, (158, 375))
 
 
 # draw the guitar strings on the screen
@@ -618,7 +614,6 @@ def draw_strings():
 
 # display and scroll the background image
 def draw_background():
-
     display.blit(game.background, game.background_rect)  # left image
     display.blit(
         game.background, game.background_rect.move(game.background_rect.width, 0)
@@ -644,7 +639,7 @@ def draw_game_objects():
             # change color of obstacle after crossing bar
             if obstacle.rect.left < 440 and not obstacle.color_set:
                 set_obstacle_color(obstacle)
-                obstacle.color_set = True # only set the color once
+                obstacle.color_set = True  # only set the color once
 
         pygame.draw.rect(display, obstacle.color, obstacle.rect)
 
@@ -654,9 +649,9 @@ def draw_game_objects():
             if powerup.type == "bonus1":
                 powerup.rect.x -= 3
             elif powerup.type == "bonus2":
-                powerup.rect.x -= 6
+                powerup.rect.x -= 5
             elif powerup.type == "bonus3":
-                powerup.rect.x -= 10
+                powerup.rect.x -= 9
             else:  # other powerups move at a set speed
                 powerup.rect.x -= 4
 
@@ -692,7 +687,7 @@ def run_game():
         sound = AudioSegment.from_mp3(filename)
         sound.export(filename[:-4] + ".wav", format="wav")
 
-    #get speed of rects
+    # get speed of rects
     if game.difficulty == 0.5:  # easy mode
         speed = 2
     elif game.difficulty == 0.35:  # medium mode
@@ -710,14 +705,14 @@ def run_game():
     pygame.time.set_timer(game.events["SCOREUP"], 1000)  # update the score every second
     pygame.time.set_timer(game.events["SPAWNLIFE"], 60000)  # spawn a extra life every minute
 
-    phaser_time = random.randint(30, 90) # spawn a phasing ability every 30 - 90 seconds
+    phaser_time = random.randint(30, 90)  # spawn a phasing ability every 30 - 90 seconds
     pygame.time.set_timer(game.events["SPAWNPHASER"], phaser_time * 1000)
 
-    bonus_time = random.randint(15, 45) # spawn a bonus every 15 - 45 seconds
+    bonus_time = random.randint(15, 45)  # spawn a bonus every 15 - 45 seconds
     pygame.time.set_timer(game.events["SPAWNBONUS"], bonus_time * 1000)
 
     # update the sprite for animation
-    pygame.timer.set_timer(game.events["UPDATESPRITE"], 750)
+    pygame.time.set_timer(game.events["UPDATESPRITE"], 250)
 
     game.background_rect = game.background.get_rect()
 
@@ -736,20 +731,20 @@ def run_game():
         # move obstacles and other objects across screen
         draw_game_objects()
 
-        #get and display notes
+        # get and display notes
         timeCheck = round((float(time.time()) - float(startGameTime)), 2)
-        #the math is an offset so the bar is on beat
-        #offset is: seconds = units * frame/units * secs/frame
-        #here it's seconds = 160 * 1/speed * 1/120
+        # the math is an offset so the bar is on beat
+        # offset is: seconds = units * frame/units * secs/frame
+        # here it's seconds = 160 * 1/speed * 1/120
         if decode:
-          if timeCheck > decode[0][0] - (1.3333333 * (1/speed)):
+            if timeCheck > decode[0][0] - (1.3333333 * (1 / speed)):
                 stringNo = decode[0][1]
-                noteLength = decode[0][2] - (timeCheck + (1.3333333 * (1/speed)))
-                if(noteLength <= 0.125):
-                  noteLength = 0.125
-                if(noteLength >= 3):
-                  noteLength = 12 * game.difficulty
-                if(stringNo != ''):
+                noteLength = decode[0][2] - (timeCheck + (1.3333333 * (1 / speed)))
+                if (noteLength <= 0.125):
+                    noteLength = 0.125
+                if (noteLength >= 3):
+                    noteLength = 12 * game.difficulty
+                if (stringNo != ''):
                     obstacle = Obstacle(stringNo, round(120 * speed * noteLength))
                     game.obstacles.append(obstacle)
                 decode.pop(0)
@@ -777,11 +772,11 @@ def run_game():
 
         powerup_collision(player.sprite.rect, game.powerups)
 
-        #delay 1 second if game won
+        # delay 1 second if game won
         if round((float(time.time()) - float(startGameTime)), 2) >= float(endGameTime + 1):
-          effect = pygame.mixer.Sound('assets/sounds/win.wav')
-          effect.play()
-          game.state = "won"
+            effect = pygame.mixer.Sound('assets/sounds/win.wav')
+            effect.play()
+            game.state = "won"
 
         for event in pygame.event.get():  # event loop
 
@@ -856,18 +851,18 @@ def run_game():
                     # spawn of 3 types of bonuses worth different amounts of points
                     num = random.randint(1, 3)
 
-                    if num == 1: # worth 100 points
+                    if num == 1:  # worth 100 points
                         bonus = Powerup("bonus1", color=(255, 211, 51))
                         game.powerups.append(bonus)
-                    elif num == 2: # worth 250 points
+                    elif num == 2:  # worth 250 points
                         bonus = Powerup("bonus2", color=(54, 255, 198))
                         game.powerups.append(bonus)
-                    elif num == 3: # worth 500 points
+                    elif num == 3:  # worth 500 points
                         bonus = Powerup("bonus3", color=(255, 74, 210))
                         game.powerups.append(bonus)
 
                     # set the spawn time for the next bonus
-                    bonus_time = random.randint(15, 45) # spawn a bonus every 15 - 45 seconds
+                    bonus_time = random.randint(15, 45)  # spawn a bonus every 15 - 45 seconds
                     pygame.time.set_timer(game.events["SPAWNBONUS"], bonus_time * 1000)
 
                 # players gets 2s of recover time after losing a life or unpausing the game
@@ -882,7 +877,7 @@ def run_game():
                     player.sprite.index += 1
                     player.sprite_group.update()
 
-        player.sprite_group.draw(player_display)
+        player.sprite_group.draw(display)
 
         screen.blit(display, (0, 0))
 
