@@ -139,7 +139,7 @@ def assign_string(nt, prev_str, prev_nt):
                     out = random.choice(possible)
             else:
                 out = random.choice(possible)
-                
+
     return out
 
 
