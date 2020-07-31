@@ -70,7 +70,6 @@ def main_menu():
             screen.blit(aboutH_image, aboutRects[1])
             if click:
                 display_about()
-                print("hello")
 
         click = False
 
@@ -399,6 +398,8 @@ def damaged_sprite():
     player.sprite.images = images
     player.sprite_group = pygame.sprite.Group(player.sprite)
 
+    player.sprite_group.update()
+
 
 # updates the sprite to the invincible version
 def invincible_sprite():
@@ -410,6 +411,8 @@ def invincible_sprite():
     player.sprite.images = images
     player.sprite_group = pygame.sprite.Group(player.sprite)
 
+    player.sprite_group.update()
+
 
 # updates the sprite to the normal version
 def normal_sprite():
@@ -420,6 +423,8 @@ def normal_sprite():
 
     player.sprite.images = images
     player.sprite_group = pygame.sprite.Group(player.sprite)
+
+    player.sprite_group.update()
 
 
 # check player is in contact with a string
@@ -461,7 +466,6 @@ def obstacle_collision(player_rect, obstacles):
         # player loses a life; obstacle hit disappears and the player gets 2s of recovery time
         if player_rect.colliderect(obstacle):
             damaged_sprite()
-            player.sprite_group.update()
             effect = pygame.mixer.Sound('assets/sounds/damage.wav')
             effect.play()
             player.lives = player.lives - 1
@@ -499,7 +503,6 @@ def powerup_collision(player_rect, powerups):
                 effect = pygame.mixer.Sound('assets/sounds/powerup.wav')
                 effect.play()
                 invincible_sprite()
-                player.sprite_group.update()
                 pygame.time.set_timer(game.events["PHASERTIMER"], 5000, True)  # 5s of invulnerability
 
             # gain 100 points
@@ -847,7 +850,6 @@ def run_game():
                     effect = pygame.mixer.Sound('assets/sounds/powerdown.wav')
                     effect.play()
                     normal_sprite()
-                    player.sprite_group.update()
 
                 # spawn a bonus
                 if event.type == game.events["SPAWNBONUS"]:
@@ -872,7 +874,6 @@ def run_game():
                 # players gets 2s of recover time after losing a life or unpausing the game
                 if event.type == game.events["RECOVER"]:
                     normal_sprite()
-                    player.sprite_group.update()
                     player.powerup = None
 
                 # update the sprite image
