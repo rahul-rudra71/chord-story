@@ -4,6 +4,7 @@ import random
 import math
 from tkinter import filedialog
 from tkinter import *
+import matplotlib.pyplot as plt
 
 
 def detect_pitch(magnitudes, pitches, t):
@@ -147,6 +148,16 @@ def decode(note_offset):
     root.destroy()
 
     clip, sample = librosa.load(filename)
+
+    #generating spectogram
+    plt.figure()
+    plt.subplots(1)
+    plt.subplots_adjust(left=0,right=1,bottom=0,top=1)
+    librosa.display.waveplot(y_perc, sr=sample, color='b', alpha=0.25)
+    librosa.display.waveplot(y_harm, sr=sample, color='r', alpha=0.5)
+    plt.axis('off')
+    plt.savefig('assets/images/spec.png', facecolor="black")
+
     #librosa is removing the first note in some files.
     onset_frames = librosa.onset.onset_detect(y=clip, sr=sample)
 

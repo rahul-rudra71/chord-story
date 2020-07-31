@@ -682,6 +682,7 @@ def run_game():
 
     # process the audio file
     decode, filename = dn.decode(game.difficulty)
+    game._background = pygame.image.load("assets/images/spec.png")
     copyDecode = decode.copy()
     # if mp3 selected, convert to a temporary wav for pygame mixer compatibility
     if filename.endswith(".mp3"):
