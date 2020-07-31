@@ -29,6 +29,8 @@ def main_menu():
     click = False
     menu_open = True
 
+    # TODO: add main menu music(?)
+
     while menu_open:
 
         display.fill((255, 255, 255))  # clear screen by filling it with white
@@ -502,18 +504,21 @@ def powerup_collision(player_rect, powerups):
 
             # gain 100 points
             if powerup.type == "bonus1":
-                # TODO: add bonus sound effect
+                effect = pygame.mixer.Sound('assets/sounds/bonus1.wav')
+                effect.play()
                 player.score += 100
                 player.total_score += 100
 
             # gain 250 points
             if powerup.type == "bonus2":
-                # TODO: add bonus sound effect
+                effect = pygame.mixer.Sound('assets/sounds/bonus2.wav')
+                effect.play()
                 player.score += 250
                 player.total_score += 250
 
             if powerup.type == "bonus3":
-                # TODO: add bonus sound effect
+                effect = pygame.mixer.Sound('assets/sounds/bonus3.wav')
+                effect.play()
                 player.score += 500
                 player.total_score += 500
 
@@ -706,7 +711,7 @@ def run_game():
     pygame.time.set_timer(game.events["SCOREUP"], 1000)  # update the score every second
     pygame.time.set_timer(game.events["SPAWNLIFE"], 60000)  # spawn a extra life every minute
 
-    phaser_time = random.randint(30, 90)  # spawn a phasing ability every 30 - 90 seconds
+    phaser_time = random.randint(30, 60)  # spawn a phasing ability every 30 - 90 seconds
     pygame.time.set_timer(game.events["SPAWNPHASER"], phaser_time * 1000)
 
     bonus_time = random.randint(15, 45)  # spawn a bonus every 15 - 45 seconds
@@ -795,10 +800,8 @@ def run_game():
                         pauseElapse = paused()
                         startGameTime += pauseElapse
                     if event.key == K_RIGHT:
-                        # TODO: change player facing direction depending on moving direction (flip sprite surface?)
                         moving_right = True
                     if event.key == K_LEFT:
-                        # TODO: change player facing direction depending on moving direction (flip sprite surface?)
                         moving_left = True
                     if event.key == K_UP:
                         if air_timer < 12:
@@ -835,7 +838,7 @@ def run_game():
                     game.powerups.append(phaser)
 
                     # set time to spawn the next phaser powerup
-                    phaser_time = random.randint(30, 90)
+                    phaser_time = random.randint(30, 60)
                     pygame.time.set_timer(game.events["SPAWNPHASER"], phaser_time * 1000)
 
                 # phaser powerup lasts for 5s
