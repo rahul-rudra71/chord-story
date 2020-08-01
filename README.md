@@ -36,8 +36,9 @@ Github: https://github.com/michaelarobertsjr/chord-story.git
 
 ## Other Game Features
 * Powerups:
-  * Extra Life: Grants the player +1 life (max number of lives at a time is 3)
-  * Invincibility: Grants the player the ability to phase through obstacles for a short period of time
+  * Extra Life (heart): Grants the player +1 life (max number of lives at a time is 3)
+  * Invincibility (star): Grants the player the ability to phase through obstacles for a short period of time
+  * Bonus Items (circle): Gives the player bonus points with faster varieties granting more points 
 
 ## Known Glitches
 * Sometimes when the player restarts the game, the player object will move to the right side of the screen. This is resolved by hitting the right arrow key to regain control.
