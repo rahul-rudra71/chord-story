@@ -252,6 +252,8 @@ def paused():
             if click:
                 player.lives = 3
                 player.score = 0
+                player.sprite.rect = pygame.Rect(218, 200, 30, 36)
+                normal_sprite()
                 player.powerup = None
                 game.obstacles.clear()
                 game.powerups.clear()
@@ -361,6 +363,8 @@ def restarting():
             if click:
                 player.lives = 3
                 player.score = 0
+                player.sprite.rect = pygame.Rect(218, 200, 30, 36)
+                normal_sprite()
                 player.powerup = None
                 game.state = "running"
                 game.obstacles.clear()
