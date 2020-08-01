@@ -44,3 +44,6 @@ Github: https://github.com/michaelarobertsjr/chord-story.git
 
 ## Other Notes
 * This project requires an Ubuntu 20.04 VM to run.
+
+## Additional Contributions
+* Isabella Bond: Designed all of the pixel art included in the game
