@@ -44,7 +44,6 @@ Github: https://github.com/michaelarobertsjr/chord-story.git
 
 ## Other Notes
 * This project requires an Ubuntu 20.04 VM to run.
-<<<<<<< HEAD
 * Note: Sound may currently be not compatible with Hyper-v Ubuntu VM.
 
 ## Additional Contributions
