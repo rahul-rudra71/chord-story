@@ -46,9 +46,8 @@ Github: https://github.com/michaelarobertsjr/chord-story.git
 * This project requires an Ubuntu 20.04 VM to run.
 <<<<<<< HEAD
 * Note: Sound may currently be not compatible with Hyper-v Ubuntu VM.
-=======
 
 ## Additional Contributions
 * Isabella Bond: Designed all of the pixel art included in the game using https://www.pixilart.com (7/13/2020-7/22/2020)
 * Joshua Lum Shue Chan: Helped research what audio library to use for the game.  (~6/1/2020)
->>>>>>> 872cf40180bf022435cce581d59dfe873c8def32
+
