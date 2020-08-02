@@ -1,4 +1,5 @@
 import librosa
+import librosa.display
 import numpy as np
 import random
 import math
@@ -150,6 +151,7 @@ def decode(note_offset):
     clip, sample = librosa.load(filename)
 
     #generating spectogram
+    y_harm, y_perc = librosa.effects.hpss(clip)
     plt.figure()
     plt.subplots(1)
     plt.subplots_adjust(left=0,right=1,bottom=0,top=1)
