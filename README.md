@@ -50,5 +50,5 @@ Github: https://github.com/michaelarobertsjr/chord-story.git
 ## Additional Contributions
 * Isabella Bond: Designed all of the pixel art included in the game using https://www.pixilart.com (7/13/2020-7/22/2020)
 * Joshua Lum Shue Chan: Helped research what audio library to use for the game.  (~6/1/2020)
-* Rahul Rudra: helped with the implementation of decoding notes (~6/1/2020)
+* Rahul Rudra: helped with the implementation of decoding notes, menu screen, game states (~6/1/2020)
 
